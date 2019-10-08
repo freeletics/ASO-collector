@@ -1,0 +1,11 @@
+ASO_KPI.egg-info
+env
+
+.env
+.aws
+.gcp
+.vscode
+
+logs/*
+raw_data
+exported_data
