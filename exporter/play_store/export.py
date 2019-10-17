@@ -2,15 +2,14 @@ import os
 import csv
 import copy
 from exporter import config
-from exporter.utils import context_managers
-from exporter.utils import func
+from exporter.utils import export_writer
 
 
 class NoRawDataForPlayStore(Exception):
     pass
 
 
-class PlayStoreExport:
+class PlayStoreExport(export_writer.ExportWriter):
     def __init__(
         self, source_data_filename, source_data_organic_filename, export_filename_base
     ):
@@ -135,26 +134,6 @@ class PlayStoreExport:
             for country, data in countries_data.items():
                 yield date, country, data
 
-    def export_data(self, data, filename):
-        data_copy = copy.copy(data)
-        func.touch(filename)
-        with context_managers.update_file(filename) as (old_file, temp_file):
-            writer = csv.DictWriter(temp_file, fieldnames=self.get_field_list())
-            writer.writeheader()
-            self.update_old_rows(writer, old_file, data_copy)
-            self.write_new_rows(writer, data_copy)
-        self.sort_export_by_date(filename)
-        self.files_saved.append(filename)
-
-    def sort_export_by_date(self, filename):
-        with context_managers.update_file(filename) as (old_file, temp_file):
-            reader = csv.DictReader(old_file)
-            sorted_rows = sorted(reader, key=lambda k: k["date"])
-            writer = csv.DictWriter(temp_file, fieldnames=self.get_field_list())
-            writer.writeheader()
-            for row in sorted_rows:
-                writer.writerow(row)
-
     def update_old_rows(self, writer, old_file, data):
         for row in csv.DictReader(old_file):
             try:
@@ -173,10 +152,6 @@ class PlayStoreExport:
                     }
                 )
 
-    def write_new_rows(self, writer, data):
-        for date, country_data in data.items():
-            writer.writerow(self.get_row(date, country_data))
-
     def get_row(self, date, data):
         return {
             "date": date,
@@ -189,7 +164,8 @@ class PlayStoreExport:
 
     def export_daily(self, data, kpi_name):
         filename = self.get_export_filename(kpi_name, "daily")
-        self.export_data(data, filename)
+        self.export_data(data, filename, self.get_field_list())
+        self.files_saved.append(filename)
         exported_data = self.get_exported_data(filename)
         return exported_data
 
