@@ -9,6 +9,7 @@ from exporter import config
 
 
 class TestPlayStoreExport:
+    @mock.patch("exporter.config.COUNTRIES", ["ar", "es"])
     def test_reading_raw_data_creates_dictionary(self, play_store_raw_data):
         exporter = export.PlayStoreExport(
             "play_store.csv", "play_store_organic.csv", "export_play_store"
