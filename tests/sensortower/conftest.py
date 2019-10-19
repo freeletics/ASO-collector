@@ -2,9 +2,15 @@ import pytest
 from unittest import mock
 
 from exporter import config
+from exporter.sensortower import export_ratings
 
 TEST_DATE = "2019-10-12"
 config.SENSORTOWER_REQUEST_DELAY = 0
+
+
+@pytest.fixture()
+def rating_executor():
+    return export_ratings.RatingExecutor(mock.Mock())
 
 
 @pytest.fixture()

@@ -19,6 +19,7 @@ DEFAULT_EXPORT_FROM = datetime(2019, 7, 1)
 
 DATE_FORMAT = "%Y-%m-%d"
 LOG_FILE_NAME_DATE_FORMAT = "%Y-%m-%d"
+MOMENT_DATE_FORMAT = "YYYY-M-D"
 
 logging.basicConfig(
     filename=f"logs/{datetime.now().strftime(LOG_FILE_NAME_DATE_FORMAT)}.log",
