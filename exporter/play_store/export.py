@@ -102,22 +102,22 @@ class PlayStoreExport(export_writer.ExportWriter):
 
     def read_downloads_organic(self):
         for date, country, data in self.data_generator():
-            self.downloads_organic.setdefault(date, {})[country] = data[
-                "downloads_organic"
-            ]
+            self.downloads_organic.setdefault(date, {})[country] = data.get(
+                "downloads_organic", 0
+            )
 
     def read_downloads_paid(self):
         for date, country, data in self.data_generator():
-            self.downloads_paid.setdefault(date, {})[country] = (
-                data["downloads"] - data["downloads_organic"]
-            )
+            self.downloads_paid.setdefault(date, {})[country] = data.get(
+                "downloads", 0
+            ) - data.get("downloads_organic", 0)
 
     def read_convertion_rates_organic(self):
         for date, country, data in self.data_generator():
             self.convertion_rates_organic.setdefault(date, {})[
                 country
             ] = self.calculate_convertion_rate(
-                data["downloads_organic"], data["impressions_organic"]
+                data.get("downloads_organic", 0), data.get("impressions_organic", 0)
             )
 
     def read_convertion_rates_paid(self):
@@ -125,8 +125,8 @@ class PlayStoreExport(export_writer.ExportWriter):
             self.convertion_rates_paid.setdefault(date, {})[
                 country
             ] = self.calculate_convertion_rate(
-                data["downloads"] - data["downloads_organic"],
-                data["impressions"] - data["impressions_organic"],
+                data.get("downloads", 0) - data.get("downloads_organic", 0),
+                data.get("impressions", 0) - data.get("impressions_organic", 0),
             )
 
     def data_generator(self):
