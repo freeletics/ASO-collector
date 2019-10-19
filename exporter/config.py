@@ -35,8 +35,8 @@ PLATFORM_IOS = "ios"
 PLATFORM_ANDROID = "android"
 
 # Sensor Tower
-# TODO: ustalic max request per minute (chyba 6)
-SENSORTOWER_REQUEST_DELAY = 5
+# TODO: ustalic max request (chyba 6 na sekunde)
+SENSORTOWER_REQUEST_DELAY = 0.2
 
 SENSORTOWER_AUTH_TOKEN = os.environ["SENSORTOWER_AUTH_TOKEN"]
 SENSORTOWER_IOS_ID = os.environ["SENSORTOWER_IOS_ID"]

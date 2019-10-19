@@ -33,4 +33,3 @@ def play_store_exporter():
     return play_store_export.PlayStoreExport(
         "play_store.csv", "play_store_organic.csv", "play_store"
     )
-

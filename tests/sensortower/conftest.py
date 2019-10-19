@@ -3,6 +3,7 @@ from unittest import mock
 
 from exporter import config
 from exporter.sensortower import export_ratings
+from exporter.sensortower import export_reviews
 
 TEST_DATE = "2019-10-12"
 config.SENSORTOWER_REQUEST_DELAY = 0
@@ -11,6 +12,79 @@ config.SENSORTOWER_REQUEST_DELAY = 0
 @pytest.fixture()
 def rating_executor():
     return export_ratings.RatingExecutor(mock.Mock())
+
+
+@pytest.fixture()
+def review_executor():
+    return export_reviews.ReviewExecutor(mock.Mock())
+
+
+@pytest.fixture()
+def review_raw_data():
+    return [
+        {
+            "date": "2019-10-09T00:00:00Z",
+            "rating": 4,
+            "app_id": 284882215,
+            "country": "US",
+        },
+        {
+            "date": "2019-10-09T00:00:00Z",
+            "rating": 4,
+            "app_id": 284882215,
+            "country": "US",
+        },
+        {
+            "date": "2019-10-09T00:00:00Z",
+            "rating": 1,
+            "app_id": 284882215,
+            "country": "US",
+        },
+        {
+            "date": "2019-10-10T00:00:00Z",
+            "rating": 2,
+            "app_id": 284882215,
+            "country": "US",
+        },
+        {
+            "date": "2019-10-10T00:00:00Z",
+            "rating": 2,
+            "app_id": 284882215,
+            "country": "US",
+        },
+        {
+            "date": "2019-10-10T00:00:00Z",
+            "rating": 2,
+            "app_id": 284882215,
+            "country": "DE",
+        },
+    ]
+
+
+@pytest.fixture()
+def review_request(requests_mock):
+    return requests_mock.get(
+        f"{config.SENSORTOWER_ENDPOINT_BASE}/ios/review/get_reviews",
+        json={
+            "feedback": [
+                {
+                    "date": "2019-10-09T00:00:00Z",
+                    "rating": 4,
+                    "app_id": 284882215,
+                    "country": "US",
+                },
+                {
+                    "date": "2019-10-09T00:00:00Z",
+                    "rating": 2,
+                    "app_id": 284882215,
+                    "country": "US",
+                },
+            ],
+            "page_count": 4,
+            "total_count": 209,
+            "rating_breakdown": [52, 12, 11, 18, 116],
+        },
+    )
 
 
 @pytest.fixture()
