@@ -9,14 +9,15 @@ class ExportWriter:
     def update_old_rows(self, writer, old_file, data):
         for row in csv.DictReader(old_file):
             try:
-                key = self.get_key(row)
+                key = self.get_key(row, data)
                 export_data = data.pop(key)
                 writer.writerow(self.get_row(key, export_data))
             except KeyError:
                 writer.writerow(row)
 
-    def get_key(self, row):
-        return row["date"]
+    def get_key(self, row, data):
+        _, platform = next(iter(data))
+        return row["date"], platform
 
     def write_new_rows(self, writer, export_data):
         for key, data in export_data.items():
