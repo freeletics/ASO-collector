@@ -17,7 +17,7 @@ def export_ratings(exporter, export_from, export_to):
 
 class RatingExecutor(utils.Executor):
     kpi = "ratings"
-    android_countries = ["global"]
+    android_field_list_params = ["global"]
 
     def get_proccessed_data(self, exported_data):
         data = self.get_row_per_date(exported_data)
