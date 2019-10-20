@@ -13,9 +13,10 @@ TASK_TRIES = 1
 
 # Countries included in export
 # TODO: update when final list known
+# TODO: dodac skrypt do updatowania (ustawiania na null w csv) listy krajow
 COUNTRIES = ["us", "de"]
 
-DEFAULT_EXPORT_FROM = datetime(2019, 7, 1)
+DEFAULT_EXPORT_FROM = datetime(2019, 4, 1)
 
 DATE_FORMAT = "%Y-%m-%d"
 LOG_FILE_NAME_DATE_FORMAT = "%Y-%m-%d"
@@ -47,6 +48,16 @@ SENSORTOWER_ENDPOINT_BASE = "https://api.sensortower.com/v1"
 SENSORTOWER_APPS = {
     SENSORTOWER_IOS_ID: PLATFORM_IOS,
     SENSORTOWER_ANDROID_ID: PLATFORM_ANDROID,
+}
+
+SENSORTOWER_RANKING_CATEGORIES = {
+    PLATFORM_IOS: ["0", "6013"],
+    PLATFORM_ANDROID: ["application", "health_and_fitness"],
+}
+
+SENSORTOWER_RANKING_CHART_TYPES = {
+    PLATFORM_IOS: ["topfreeapplications", "topfreeipadapplications"],
+    PLATFORM_ANDROID: ["topselling_free"],
 }
 
 # Play store
