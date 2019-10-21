@@ -4,6 +4,7 @@ from unittest import mock
 from exporter import config
 from exporter.sensortower import export_ratings
 from exporter.sensortower import export_reviews
+from exporter.sensortower import export_rankings
 
 TEST_DATE = "2019-10-12"
 config.SENSORTOWER_REQUEST_DELAY = 0
@@ -17,6 +18,44 @@ def rating_executor():
 @pytest.fixture()
 def review_executor():
     return export_reviews.ReviewExecutor(mock.Mock())
+
+
+@pytest.fixture
+def ranking_executor():
+    return export_rankings.RankingExecutor(mock.Mock())
+
+
+@pytest.fixture()
+def ranking_data_request(requests_mock):
+    return requests_mock.get(
+        f"{config.SENSORTOWER_ENDPOINT_BASE}/android/category/category_history",
+        json={
+            'com.freeletics.lite': {
+                "US": {
+                    "health_and_fitness": {
+                        "topselling_free": {
+                            "graphData": [
+                                [1570665600, 148, None],
+                                [1570752000, 133, None],
+                            ],
+                            "todays_rank": 162,
+                        }
+                    }
+                },
+                "DE": {
+                    "health_and_fitness": {
+                        "topselling_free": {
+                            "graphData": [
+                                [1570665600, 73, None],
+                                [1570752000, 72, None],
+                            ],
+                            "todays_rank": 73,
+                        }
+                    }
+                },
+            }
+        },
+    )
 
 
 @pytest.fixture()
