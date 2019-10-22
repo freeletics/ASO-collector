@@ -8,6 +8,7 @@ load_dotenv()
 BASE_DIR = os.getcwd()
 RAW_DATA_DIR = os.path.join(BASE_DIR, "raw_data")
 EXPORTED_DATA_DIR = os.path.join(BASE_DIR, "exported_data")
+APP_STORE_NODE_APP_DIR = os.path.join(BASE_DIR, "exporter/app_store_node")
 
 TASK_TRIES = 1
 
@@ -34,6 +35,14 @@ REQUEST_RETRY_DELAY = 4
 
 PLATFORM_IOS = "ios"
 PLATFORM_ANDROID = "android"
+
+# App Store
+APP_STORE_USERNAME = os.environ["APP_STORE_USERNAME"]
+APP_STORE_PASSWORD = os.environ["APP_STORE_PASSWORD"]
+APP_STORE_APP_ID = os.environ["APP_STORE_APP_ID"]
+SEARCH_ADS_CERTIFICATES = os.environ["SEARCH_ADS_CERTIFICATES"]
+APP_STORE_RAW_DATA_FILENAME = 'app_store_data.json'
+
 
 # Sensor Tower
 # TODO: ustalic max request (chyba 6 na sekunde)
