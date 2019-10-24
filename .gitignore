@@ -1,0 +1,14 @@
+ASO_KPI.egg-info
+env
+
+.env
+.aws
+.gcp
+.vscode
+.search-ads
+
+exporter/app_store_node/node_modules
+exporter/app_store_node/package-lock.json
+logs/*
+raw_data
+exported_data
