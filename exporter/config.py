@@ -41,8 +41,7 @@ APP_STORE_USERNAME = os.environ["APP_STORE_USERNAME"]
 APP_STORE_PASSWORD = os.environ["APP_STORE_PASSWORD"]
 APP_STORE_APP_ID = os.environ["APP_STORE_APP_ID"]
 SEARCH_ADS_CERTIFICATES = os.environ["SEARCH_ADS_CERTIFICATES"]
-APP_STORE_RAW_DATA_FILENAME = 'app_store_data.json'
-
+APP_STORE_RAW_DATA_FILENAME = "app_store_data.json"
 
 # Sensor Tower
 # TODO: ustalic max request (chyba 6 na sekunde)

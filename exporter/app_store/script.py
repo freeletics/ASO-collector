@@ -6,9 +6,10 @@ from datetime import datetime
 from exporter import config
 from exporter.utils import decorators
 from exporter.app_store import export
+from Naked.toolshed.shell import execute_js
 
 logger = logging.getLogger(__name__)
-from Naked.toolshed.shell import execute_js
+
 
 APP_STORE_RAW_DATA_FILE = os.path.join(config.RAW_DATA_DIR,
                                        config.APP_STORE_RAW_DATA_FILENAME)

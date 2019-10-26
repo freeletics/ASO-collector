@@ -30,11 +30,31 @@ class AppStoreExport:
     def write_exports(self):
         self.write_downloads_export()
         self.write_impressions_export()
+        self.write_conversion_rates_export()
 
     def proccessed_data(self, exported_data):
         self.data = self.get_row_per_date(exported_data)
         self.downloads = self.get_downloads(self.data)
         self.impressions = self.get_impressions(self.data)
+        self.conversion_rates = self.get_conversion_rates(self.data)
+
+    def get_conversion_rates(self, all_data):
+        proccessed_data = {}
+        for date, aggregation, country, data in self.data_generator(all_data):
+            row = proccessed_data.setdefault(date, {}).setdefault(aggregation, {})
+            row[f'{country}_browsers'] = self.get_convertion_rate(
+                data['units_browsers'], data['page_view_unique_browsers']
+            )
+            row[f'{country}_searchers'] = self.get_convertion_rate(
+                data['units_searchers'], data['impressions_total_unique_searchers']
+            )
+        return proccessed_data
+
+    def get_convertion_rate(self, downloads, denominator):
+        try:
+            return int(downloads) * 1.0 / int(denominator)
+        except ZeroDivisionError:
+            return None
 
     def get_downloads(self, all_data):
         proccessed_data = {}
@@ -85,6 +105,20 @@ class AppStoreExport:
             }
         return proccessed_data
 
+    def write_conversion_rates_export(self):
+        filed_list_params = ['date', *self.get_conversion_rates_field_list()]
+        filename_template = 'app_store_conversion_rates_{}s.csv'
+        self.write_aggregation_exports(
+            self.conversion_rates,
+            filename_template,
+            filed_list_params
+        )
+
+    def get_conversion_rates_field_list(self):
+        return list(chain.from_iterable((
+            f'{country}_browsers',
+            f'{country}_searchers') for country in config.COUNTRIES))
+    
     def write_downloads_export(self):
         filed_list_params = ['date', *self.get_downloads_field_list()]
         filename_template = 'app_store_downloads_{}s.csv'
