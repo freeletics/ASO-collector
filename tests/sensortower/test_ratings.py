@@ -62,7 +62,7 @@ class TestExportRatings:
         assert type(params[1]) is dict
 
     @mock.patch("exporter.config.COUNTRIES", ["es", "pl"])
-    @mock.patch("exporter.config.SENSORTOWER_APPS", {"a": "ios"})
+    @mock.patch("exporter.sensortower.export_ratings.utils.Executor.apps", {"a": "ios"})
     def test_get_export_data_return_for_all_countries(
         self, rating_three_days_es_request, rating_executor
     ):
