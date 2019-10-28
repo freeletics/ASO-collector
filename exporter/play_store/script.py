@@ -2,6 +2,7 @@ import logging
 import os
 from datetime import datetime
 from datetime import date
+from datetime import timedelta
 
 from exporter import config
 from exporter import bucket
@@ -38,6 +39,8 @@ def run(export_from, export_to):
         logger.info("Exporting convertsion rates")
         exporter.export_convertion_rates()
         logger.info("Data updated")
+        logger.info("Upload data to s3")
+        exporter.upload_files()
 
 
 def download_reports(export_from, bucket):
@@ -61,14 +64,14 @@ def get_file_names_from_storage(bucket):
 
 
 def report_download_condition(export_from, file_name):
-    return export_from is None or get_play_store_report_date(file_name) >= export_from
+    return export_from is None or get_play_store_report_date(file_name) >= export_from - timedelta(days=30)
 
 
 def get_play_store_report_date(name):
     try:
         return datetime.strptime(
             next((part for part in name.split("_") if part.isdigit())), "%Y%m"
-        )
+        ) 
     except StopIteration:
         logger.info(
             f"File {name} do not have assumed format."

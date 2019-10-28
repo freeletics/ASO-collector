@@ -8,6 +8,7 @@ class Executor:
 
     def __init__(self, exporter):
         self.exporter = exporter
+        self.writer = export_writer.ExportWriter()
 
     @property
     def apps(self):
@@ -26,6 +27,7 @@ class Executor:
         exported_data = self.get_export_data(params_list, self.exporter)
         proccessed_data = self.get_proccessed_data(exported_data)
         self.write_export(proccessed_data)
+        self.writer.upload_files()
 
     def get_params(self, *args, **kwargs):
         raise NotImplementedError
@@ -48,9 +50,8 @@ class Executor:
         return params_list
 
     def write_export(self, data):
-        writer = export_writer.ExportWriter()
-        self.write_export_for_platform(writer, data, "ios", self.ios_field_list_params)
-        self.write_export_for_platform(writer, data, "android", self.android_field_list_params)
+        self.write_export_for_platform(self.writer, data, "ios", self.ios_field_list_params)
+        self.write_export_for_platform(self.writer, data, "android", self.android_field_list_params)
 
     def write_export_for_platform(self, writer, data, platform_name, filed_list_params):
         filename_ios = self.get_filename(platform_name, self.kpi)

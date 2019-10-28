@@ -13,6 +13,7 @@ class PlayStoreExport(export_writer.ExportWriter):
     def __init__(
         self, source_data_filename, source_data_organic_filename, export_filename_base
     ):
+        super().__init__()
         self.export_filename_base = export_filename_base
         self.source_data_filename = source_data_filename
         self.source_data_organic_filename = source_data_organic_filename
@@ -25,7 +26,6 @@ class PlayStoreExport(export_writer.ExportWriter):
         self.downloads_paid = {}
         self.convertion_rates_organic = {}
         self.convertion_rates_paid = {}
-        self.files_saved = []
 
     def read_raw_data(self):
         self.read_raw_data_from_file(
@@ -165,7 +165,6 @@ class PlayStoreExport(export_writer.ExportWriter):
     def export_daily(self, data, kpi_name):
         filename = self.get_export_filename(kpi_name, "daily")
         self.export_data(data, filename, self.get_field_list())
-        self.files_saved.append(filename)
         exported_data = self.get_exported_data(filename)
         return exported_data
 

@@ -1,11 +1,16 @@
 import csv
 import copy
 
+from exporter import config
+from exporter import bucket
 from exporter.utils import context_managers
 from exporter.utils import func
 
 
 class ExportWriter:
+    def __init__(self):
+        self.files_saved = []
+
     def update_old_rows(self, writer, old_file, data):
         for row in csv.DictReader(old_file):
             try:
@@ -42,6 +47,7 @@ class ExportWriter:
             self.update_old_rows(writer, old_file, data_copy)
             self.write_new_rows(writer, data_copy)
         self.sort_export_by_date(filename, field_list)
+        self.files_saved.append(filename)
 
     def sort_export_by_date(self, filename, field_list):
         with context_managers.update_file(filename) as (old_file, temp_file):
@@ -51,3 +57,12 @@ class ExportWriter:
             writer.writeheader()
             for row in sorted_rows:
                 writer.writerow(row)
+
+    # TODO: retry logic on fail
+    def upload_files(self):
+        bucket_name = config.AWS_S3_BUCKET_NAME
+        aws_bucket = bucket.BucketAws(bucket_name)
+        for filename in self.files_saved:
+            object_name = filename.split('/')[-1]
+            aws_bucket.upload_file(filename, object_name)
+            
