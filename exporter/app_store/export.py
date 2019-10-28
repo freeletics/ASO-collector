@@ -70,7 +70,6 @@ class AppStoreExport:
             row[f'{country}_organic_searchers'] = (
                 data['units_searchers'] - data['downloads_search_ads']
             )
-            row[f'{country}_organic']
         return proccessed_data
 
     def get_impressions(self, all_data):
@@ -135,8 +134,7 @@ class AppStoreExport:
             f'{country}_browsers',
             f'{country}_search_ads',
             f'{country}_organic',
-            f'{country}_organic_searchers',
-            f'{country}_organic') for country in config.COUNTRIES))
+            f'{country}_organic_searchers') for country in config.COUNTRIES))
 
     def write_impressions_export(self):
         filed_list_params = ['date', *self.get_impressions_field_list()]
