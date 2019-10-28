@@ -12,16 +12,16 @@ class ExportWriter:
         self.files_saved = []
 
     def update_old_rows(self, writer, old_file, data):
+        _, platform = next(iter(data))
         for row in csv.DictReader(old_file):
             try:
-                key = self.get_key(row, data)
+                key = self.get_key(row, platform)
                 export_data = data.pop(key)
                 writer.writerow(self.get_row(key, export_data))
             except KeyError:
                 writer.writerow(row)
 
-    def get_key(self, row, data):
-        _, platform = next(iter(data))
+    def get_key(self, row, platform):
         return row["date"], platform
 
     def write_new_rows(self, writer, export_data):
