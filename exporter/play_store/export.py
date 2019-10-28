@@ -44,7 +44,7 @@ class PlayStoreExport(export_writer.ExportWriter):
             config.PLAY_STORE_CSV_HEADER_MAP_ORGANIC,
         )
         for date, country, data in self.raw_data_generator(self.raw_data_organic):
-            self.raw_data_combined.setdefault(date, {})[country].update(
+            self.raw_data_combined.setdefault(date, {}).setdefault(country, {}).update(
                 {
                     "impressions_organic": int(data["impressions_organic"]),
                     "downloads_organic": int(data["downloads_organic"]),
