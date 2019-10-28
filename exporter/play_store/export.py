@@ -163,7 +163,7 @@ class PlayStoreExport(export_writer.ExportWriter):
         }
 
     def export_daily(self, data, kpi_name):
-        filename = self.get_export_filename(kpi_name, "daily")
+        filename = self.get_export_filename(kpi_name, "days")
         self.export_data(data, filename, self.get_field_list())
         exported_data = self.get_exported_data(filename)
         return exported_data

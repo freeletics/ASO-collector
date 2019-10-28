@@ -68,4 +68,4 @@ class Executor:
         }
 
     def get_filename(self, platform_name, kpi):
-        return f"{config.EXPORTED_DATA_DIR}/{self.source_name}_{kpi}_{platform_name}_daily.csv"
+        return f"{config.EXPORTED_DATA_DIR}/{self.source_name}_{kpi}_{platform_name}_days.csv"
