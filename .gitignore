@@ -1,5 +1,6 @@
 ASO_KPI.egg-info
 env
+**/__pycache__
 
 .env
 .aws
@@ -12,3 +13,4 @@ exporter/app_store_node/package-lock.json
 logs/*
 raw_data
 exported_data
+demo

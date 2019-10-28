@@ -1,5 +1,6 @@
 import os
 import boto3
+from botocore import exceptions
 from google.cloud import storage
 from exporter import config
 
@@ -36,6 +37,15 @@ class BucketAws(Bucket):
         self.resource.Object(self.name, file_name).download_file(
             os.path.join(full_dir, file_name)
         )
+
+    def upload_file(self, file_name, object_name=None):
+        if object_name is None:
+            object_name = file_name
+        try:
+            response = self.resource.meta.client.upload_file(file_name, self.name, object_name)
+        except exceptions.ClientError as e:
+            return False
+        return True
 
     @staticmethod
     def get_file_name(obj):

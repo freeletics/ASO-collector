@@ -30,6 +30,8 @@ logging.basicConfig(
     format="%(asctime)s:%(name)s:%(levelname)s:%(message)s",
 )
 
+AWS_S3_BUCKET_NAME = os.environ["AWS_S3_BUCKET_NAME"]
+
 REQUEST_RETRIES = 3
 REQUEST_RETRY_DELAY = 4
 
