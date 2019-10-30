@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+import moment
 import logging
 from dotenv import load_dotenv
 
@@ -17,7 +18,7 @@ TASK_TRIES = 1
 # TODO: dodac skrypt do updatowania (ustawiania na null w csv) listy krajow
 COUNTRIES = ["us", "de"]
 
-DEFAULT_EXPORT_FROM = datetime(2019, 4, 1)
+DEFAULT_EXPORT_FROM = moment.date(os.environ["DEFAULT_EXPORT_FROM"]).date
 
 DATE_FORMAT = "%Y-%m-%d"
 LOG_FILE_NAME_DATE_FORMAT = "%Y-%m-%d"
