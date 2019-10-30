@@ -5,10 +5,11 @@ from exporter.utils import export_writer
 class Executor:
     android_field_list_params = config.COUNTRIES
     ios_field_list_params = config.COUNTRIES
+    export_writer_class = export_writer.ExportWriter
 
     def __init__(self, exporter):
         self.exporter = exporter
-        self.writer = export_writer.ExportWriter()
+        self.writer = self.export_writer_class()
 
     @property
     def apps(self):

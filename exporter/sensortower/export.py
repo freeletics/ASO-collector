@@ -33,7 +33,7 @@ class SensorTowerExport:
         return requests.get(
             f'{config.SENSORTOWER_ENDPOINT_BASE}{endpoint}',
             params=params,  
-            timeout=5,
+            timeout=config.REQUEST_TIMEOUT,
         )
 
     def update_request_counter(self):
