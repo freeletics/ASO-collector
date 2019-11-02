@@ -44,13 +44,18 @@ class FeaturedTodayExecutor(utils.Executor):
             for story in data["stories"]:
                 for index, app in enumerate(story["apps"]):
                     if config.FEATURED_TODAY_APP_NAME in app["name"]:
+                        artwork = (
+                            story["artwork"].get("url")
+                            if story.get("artwork")
+                            else None,
+                        )
                         proccessed_data[(date, country)] = {
                             "app_name": app["name"],
                             "position": story["position"],
                             "title": story["title"],
                             "app_position": index,
                             "app_icon": app["icon_url"],
-                            "artwork": story["artwork"].get("url"),
+                            "artwork": artwork,
                         }
         return proccessed_data
 
