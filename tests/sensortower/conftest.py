@@ -116,6 +116,51 @@ def featured_apps_request(requests_mock):
 
 
 @pytest.fixture()
+def version_request_data():
+    return [
+        {
+            "update_data": [
+                [
+                    "2019-10-18T00:00:00Z",
+                    {
+                        "version": None,
+                        "name": None,
+                        "description": None,
+                        "price": None,
+                        "icon": None,
+                        "screenshot": None,
+                        "category": None,
+                        "support_url": None,
+                        "publisher_name": None,
+                        "file_size": None,
+                        "related_app": None,
+                        "minimum_os_version": None,
+                        "featured_user_feedback": {"before": [], "after": []},
+                        "publisher_id": None,
+                        "keyword": None,
+                        "country": None,
+                        "supported_device": None,
+                        "supported_language": None,
+                        "apple_watch_enabled": None,
+                        "apple_watch_icon": None,
+                        "apple_watch_screenshot": None,
+                        "imessage_enabled": None,
+                        "imessage_icon": None,
+                        "imessage_screenshot": None,
+                        "top_in_app_purchase": None,
+                        "subtitle": None,
+                        "promo_text": None,
+                    },
+                ]
+            ],
+            "platform": "ios",
+            "country": "de",
+            "app_info": {"data": "example"},
+        }
+    ]
+
+
+@pytest.fixture()
 def featured_creative_request(requests_mock):
     return requests_mock.get(
         f"{config.SENSORTOWER_ENDPOINT_BASE}/ios/featured/creatives",
