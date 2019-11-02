@@ -10,6 +10,8 @@ from exporter.sensortower import export_reviews
 from exporter.sensortower import export_featured_today
 from exporter.sensortower import export_featured_creatives
 from exporter.sensortower import export_featured_apps
+from exporter.sensortower import export_versions
+from exporter.sensortower import export_current_keywords
 
 logger = logging.getLogger(__name__)
 
@@ -31,6 +33,10 @@ def run(export_from, export_to):
     )
     logger.info("Getting featured apps IOS reports")
     export_featured_apps.export_featured_apps(exporter, export_from, export_to)
+    logger.info("Getting versions reports")
+    export_versions.export_versions(exporter, export_from)
+    logger.info("Getting keywords reports")
+    export_current_keywords.export_current_keywords(exporter)
     logger.info(f"Sensortower API calls count: {exporter.request_counter}")
 
 
