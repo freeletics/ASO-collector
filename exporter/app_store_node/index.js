@@ -25,17 +25,20 @@ async function getEverythingForPeriod(from, to) {
   const data = {}
   while (monthStartDate <= endDate) {
     const startOfMonth = monthStartDate.clone().startOf("month");
+    console.log(startOfMonth)
     const endOfMonth = startOfMonth.clone().endOf("month");
     await getAppStoreData(data, startOfMonth, endOfMonth, "month", connection);
     monthStartDate.add(1, "month");
   }
   while (weekStartDate <= endDate) {
     const weekMonday = weekStartDate.clone().day("Monday");
+    console.log(weekMonday)
     const weekSunday = weekMonday.clone().add(1, 'week').subtract(1, 'day');
     await getAppStoreData(data, weekMonday, weekSunday, "week", connection);
     weekStartDate.add(1, "week");
   } 
   while (startDate <= endDate) {
+    console.log(startDate)
     await getAppStoreData(data, startDate, startDate, "day", connection);
     startDate.add(1, "day");
   }
