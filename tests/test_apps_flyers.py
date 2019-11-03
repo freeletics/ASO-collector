@@ -28,7 +28,7 @@ class TestAppFlyerExecutor:
         self, apps_flyer_installs_report_request, raw_data, apps_flyers_executor
     ):
         exported_data = apps_flyers_executor.get_export_data([("ios", {})])
-        assert exported_data[0]["country"] == "US"
+        assert exported_data[0]["country"] == "DE"
         assert exported_data[0]["platform"] == "ios"
 
     def test_get_proccessed_data_return_dict(self, apps_flyers_executor):
@@ -37,14 +37,16 @@ class TestAppFlyerExecutor:
                 "platform": "ios",
                 "date": "2018-02-24",
                 "country": "US",
+                "channel": "None",
                 "installs": "4043",
             },
             {
                 "platform": "ios",
                 "date": "2019-05-13",
                 "country": "DE",
+                "channel": "None",
                 "installs": "1144",
             },
         ]
         proccessed_data = apps_flyers_executor.get_proccessed_data(exported_data)
-        assert proccessed_data[("2019-05-13", "ios")] == { "de": 1144}
+        assert proccessed_data[("2019-05-13", "ios")] == { "de_organic": 1144}

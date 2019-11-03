@@ -12,12 +12,13 @@ class AppsFlyerExecutor(executor.Executor):
     source_name = "apps_flyer"
     kpi = "installs"
     kpis = "installs"
-    groupings = "install_time,geo"
+    groupings = "install_time,geo,af_channel"
     apps = config.APPS_FLYER_APPS
     file_name_template = "apps_flyer_installs_{platform}.csv"
     report_headers_map = {
         "Install Time": "date",
         "GEO": "country",
+        "Channel": "channel",
         "Installs": "installs",
     }
 
@@ -66,13 +67,23 @@ class AppsFlyerExecutor(executor.Executor):
             platform = data["platform"]
             installs = data["installs"]
             country = data["country"].lower()
-            record = proccessed_data.setdefault((date, platform), {})[country] = int(
-                installs
-            )
+            record = proccessed_data.setdefault((date, platform), {})
+            if data["channel"] == "None":
+                record[f"{country}_organic"] = int(installs)
+            else:
+                paid = record.setdefault(f"{country}_paid", 0)
+                record[f"{country}_paid"] = paid + int(installs)
         return proccessed_data
 
     def get_export_field_list(self, filed_list_params):
-        return ["date", *[country for country in config.COUNTRIES]]
+        return [
+            "date",
+            *self.get_country_fields("{}_organic"),
+            *self.get_country_fields("{}_paid"),
+        ]
+
+    def get_country_fields(self, template):
+        return [template.format(country) for country in config.COUNTRIES]
 
     def get_params(self, export_from, export_to, app_id, platform):
         return (

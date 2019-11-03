@@ -45,23 +45,27 @@ def apps_flyer_installs_report_request(requests_mock):
     return requests_mock.get(
         f"{config.APPS_FLYER_ENDPOINT_BASE}/export/master_report/v4",
         text="""
-Install Time,GEO,Installs
-2018-02-24,US,4043
-2019-05-13,DE,1144
-2019-04-07,US,2058
-2019-03-30,US,1174
-2018-12-24,US,1263
-2018-10-23,DE,578
-2019-01-28,DE,1706
-2018-06-30,US,3628
-2018-07-17,US,5124
-2019-01-15,US,3893
-2019-09-02,DE,1031
-2018-03-29,DE,641
-2018-08-28,DE,807
-2018-10-09,US,2624
-2019-04-12,US,1439
-2018-05-02,DE,1140
+Install Time,GEO,Channel,Installs
+2019-09-13,DE,Snapchat,2
+2019-10-13,DE,None,570
+2019-10-16,US,Facebook,31
+2019-09-21,DE,Tinder,1
+2019-10-19,US,None,349
+2019-09-14,US,Facebook,32
+2019-10-17,US,Facebook,33
+2019-10-26,US,Instagram,42
+2019-10-25,DE,AudienceNetwork,1
+2019-10-11,US,AudienceNetwork,2
+2019-10-19,US,AudienceNetwork,1
+2019-10-19,DE,AudienceNetwork,2
+2019-09-19,US,Tinder,21
+2019-09-29,DE,Instagram,105
+2019-09-08,DE,Instagram,75
+2019-10-06,DE,None,614
+2019-09-28,US,Instagram,75
+2019-09-18,DE,Tinder,36
+2019-09-18,US,Facebook,94
+2019-09-08,DE,None,739
 """,
     )
 
