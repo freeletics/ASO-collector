@@ -39,7 +39,6 @@ class ReviewExecutor(utils.Executor):
 
         return proccessed_data
 
-    #TODO: move to mixin or something
     def get_export_field_list(self, countries):
         return [
             "date",
@@ -88,7 +87,6 @@ class ReviewExecutor(utils.Executor):
                 exported_data.extend(data["feedback"])
         return exported_data
 
-    #TODO: moze do mixina sie tez da przeniesc
     def get_params(self, export_from, export_to, app_id, platform, country):
         return (
             platform,

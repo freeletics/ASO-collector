@@ -12,7 +12,6 @@ from . import export
 logger = logging.getLogger(__name__)
 
 
-# TODO: put updated export in AWS S3 bucket
 # TODO: download current state from AWS S3 bucket
 @decorators.retry(Exception, tries=config.TASK_TRIES, logger=logger)
 def run(export_from, export_to):

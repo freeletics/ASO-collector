@@ -1,4 +1,3 @@
-// TODO: dodac liste krajow 
 module.exports = {
   it: {
     name: 'Italy',
