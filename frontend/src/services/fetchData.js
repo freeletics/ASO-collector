@@ -22,7 +22,7 @@ function fetchData(filename, callback) {
     },
     function(error, data) {
       if (error != null) {
-        alert('Failed to retrieve an object: ' + error);
+        console.log('Failed to retrieve an object: ' + error);
       } else {
         const arr = CSV.parse(data.Body.toString('utf-8'));
         callback(arr);
