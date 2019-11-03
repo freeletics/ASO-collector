@@ -1,7 +1,12 @@
 import React from 'react';
+import moment from 'moment';
 import fetchData from '../../services/fetchData';
 
-const withFilters = (WrappedComponent, dataSources) => {
+export const getRange = ({ from, to }, data) => data.filter(
+    row => from <= moment(row.date).toDate() && to >= moment(row.date).toDate(),
+  );
+
+const withFilters = (WrappedComponent, ...dataSources) => {
   return class extends React.Component {
     constructor(props) {
       super(props);
@@ -32,14 +37,12 @@ const withFilters = (WrappedComponent, dataSources) => {
     update() {
       const aggregation = this.props.params.selectedAggregation.value;
       dataSources.forEach(([filenameBase, dataName]) => {
-        if (!this.state[dataName]) {
-          fetchData(this.getFilename(filenameBase, aggregation), data =>
-            this.setState({
-              ['loaded' + dataName]: true,
-              [dataName]: this.processData(data),
-            }),
-          );
-        }
+        fetchData(this.getFilename(filenameBase, aggregation), data =>
+          this.setState({
+            ['loaded' + dataName]: true,
+            [dataName]: this.processData(data),
+          }),
+        );
       });
     }
 
@@ -53,12 +56,34 @@ const withFilters = (WrappedComponent, dataSources) => {
       );
     }
 
+    dates() {
+      const { fromDate, toDate } = this.props.params;
+      return { from: fromDate, to: toDate };
+    }
+
+    datesCompare() {
+      const { fromCompareDate, toCompareDate } = this.props.params;
+      return { from: fromCompareDate, to: toCompareDate };
+    }
+    dataIos = (name = 'dataIos') => getRange(this.dates(), this.state[name]);
+
+    dataAndroid = (name = 'dataAndroid') =>
+      getRange(this.dates(), this.state[name]);
+
+    dataIosCompare = (name = 'dataIos') =>
+      getRange(this.datesCompare(), this.state[name]);
+
+    dataAndroidCompare = (name = 'dataAndroid') =>
+      getRange(this.datesCompare(), this.state[name]);
+
     render() {
       return this.allLoaded().every(x => Boolean(x)) ? (
         <WrappedComponent
           {...this.props}
-          dataAndroid={this.state.dataAndroid}
-          dataIos={this.state.dataIos}
+          dataAndroid={this.dataAndroid}
+          dataIos={this.dataIos}
+          dataAndroidCompare={this.dataAndroidCompare}
+          dataIosCompare={this.dataIosCompare}
         />
       ) : null;
     }

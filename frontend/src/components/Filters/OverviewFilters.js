@@ -36,10 +36,6 @@ class OverviewFilters extends React.Component {
         .subtract(2 * config.filterDefaultPeriod + 1, 'days')
         .toDate(),
     };
-    this.getDefaultQueryParams();
-  }
-
-  getDefaultQueryParams() {
     const params = queryString.parse(this.state.history.location.search);
     Object.entries(params).forEach(([name, value]) => {
       if (name === 'aggregation') {
@@ -59,7 +55,7 @@ class OverviewFilters extends React.Component {
   handleAggregationChange = selectedAggregation => {
     this.setState({
       selectedAggregation: selectedAggregation ? selectedAggregation : [],
-    });
+    }, this.updateChildren);
   };
 
   handleChartSizeChange = () => {
@@ -119,7 +115,6 @@ class OverviewFilters extends React.Component {
     return (
       <div>
         <Row className="align-end">
-          <Col lg={4} md={0}></Col>
           <Col lg={4} md={0}>
             <Button
               onClick={this.handleChartSizeChange}
@@ -150,6 +145,15 @@ class OverviewFilters extends React.Component {
               Copy report link
             </Button>
           </Col>
+          <Col lg={4} md={12} sm={12} xs={12} className="mb-3">
+            <Label>Aggregation</Label>
+            <Select
+              closeMenuOnSelect={false}
+              onChange={this.handleAggregationChange}
+              options={config.aggregationOptions}
+              value={this.state.selectedAggregation}
+            />
+          </Col>
           <Col lg={12} md={12} sm={12} xs={12} className="mb-3">
             <Label>Countries</Label>
             <Select
@@ -161,7 +165,7 @@ class OverviewFilters extends React.Component {
               placeholder="Select countries (default all)"
             />
           </Col>
-          <Col lg={4} md={6} sm={6} xs={12} className="mb-3">
+          <Col lg={3} md={6} sm={6} xs={12} className="mb-3">
             <Label>From</Label>
             <DatePicker
               dateFormat={config.datePickerFormat}
@@ -169,7 +173,7 @@ class OverviewFilters extends React.Component {
               onChange={this.handleFromDateChange}
             />
           </Col>
-          <Col lg={4} md={6} sm={6} xs={12} className="mb-3">
+          <Col lg={3} md={6} sm={6} xs={12} className="mb-3">
             <Label>To</Label>
             <DatePicker
               dateFormat={config.datePickerFormat}
@@ -177,16 +181,7 @@ class OverviewFilters extends React.Component {
               onChange={this.handleToDateChange}
             />
           </Col>
-          <Col lg={4} md={12} sm={12} xs={12} className="mb-3">
-            <Label>Aggregation</Label>
-            <Select
-              closeMenuOnSelect={false}
-              onChange={this.handleAggregationChange}
-              options={config.aggregationOptions}
-              value={this.state.selectedAggregation}
-            />
-          </Col>
-          <Col lg={4} md={6} sm={6} xs={12} className="mb-3">
+          <Col lg={3} md={6} sm={6} xs={12} className="mb-3">
             <Label>From (comparison)</Label>
             <DatePicker
               dateFormat={config.datePickerFormat}
@@ -194,23 +189,13 @@ class OverviewFilters extends React.Component {
               onChange={this.handleFromCompareDateChange}
             />
           </Col>
-          <Col lg={4} md={6} sm={6} xs={12} className="mb-3">
+          <Col lg={3} md={6} sm={6} xs={12} className="mb-3">
             <Label>To (comparison)</Label>
             <DatePicker
               dateFormat={config.datePickerFormat}
               selected={this.state.toCompareDate}
               onChange={this.handleToCompareDateChange}
             />
-          </Col>
-          <Col lg={4} md={12} sm={12} xs={12} className="mb-3">
-            <Button
-              size="m"
-              className="primary border-0"
-              block
-              onClick={this.updateChildren}
-            >
-              Filter
-            </Button>
           </Col>
         </Row>
         {children}
