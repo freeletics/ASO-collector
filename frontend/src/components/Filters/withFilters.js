@@ -2,7 +2,8 @@ import React from 'react';
 import moment from 'moment';
 import fetchData from '../../services/fetchData';
 
-export const getRange = ({ from, to }, data) => data.filter(
+export const getRange = ({ from, to }, data) =>
+  data.filter(
     row => from <= moment(row.date).toDate() && to >= moment(row.date).toDate(),
   );
 
@@ -47,9 +48,15 @@ const withFilters = (WrappedComponent, ...dataSources) => {
     }
 
     getFilename(base, aggregation) {
-      return `${base}_${aggregation}.csv`;
+      return `${base}_${this.getAggregation(base, aggregation)}.csv`;
     }
 
+    getAggregation(base, aggregation) {
+      if (base.includes('featured') || base.includes('timeline')) {
+        aggregation = 'days';
+      }
+      return aggregation;
+    }
     allLoaded() {
       return dataSources.map(
         ([_, dataName]) => this.state['loaded' + dataName],
