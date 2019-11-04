@@ -101,13 +101,13 @@ PLAY_STORE_CSV_HEADER_MAP_BASE = {
 
 PLAY_STORE_CSV_HEADER_MAP_TOTAL = {
     **PLAY_STORE_CSV_HEADER_MAP_BASE,
-    "Store Listing Visitors": "impressions",
+    "Store Listing Visitors": "page_views",
     "Installers": "downloads",
 }
 
 PLAY_STORE_CSV_HEADER_MAP_ORGANIC = {
     **PLAY_STORE_CSV_HEADER_MAP_BASE,
-    "Store Listing Visitors": "impressions_organic",
+    "Store Listing Visitors": "page_views_organic",
     "Installers": "downloads_organic",
 }
 

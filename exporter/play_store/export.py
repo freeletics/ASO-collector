@@ -25,8 +25,8 @@ class PlayStoreExport(export_writer.ExportWriter):
         self.raw_data_combined = {}
         self.downloads_organic = {}
         self.downloads_paid = {}
-        self.impressions_organic = {}
-        self.impressions_paid = {}
+        self.page_views_organic = {}
+        self.page_views_paid = {}
         self.convertion_rates_organic = {}
         self.convertion_rates_paid = {}
 
@@ -38,7 +38,7 @@ class PlayStoreExport(export_writer.ExportWriter):
         )
         for date, country, data in self.raw_data_generator(self.raw_data):
             self.raw_data_combined.setdefault(date, {})[country] = {
-                "impressions": int(data["impressions"]),
+                "page_views": int(data["page_views"]),
                 "downloads": int(data["downloads"]),
             }
         self.read_raw_data_from_file(
@@ -49,7 +49,7 @@ class PlayStoreExport(export_writer.ExportWriter):
         for date, country, data in self.raw_data_generator(self.raw_data_organic):
             self.raw_data_combined.setdefault(date, {}).setdefault(country, {}).update(
                 {
-                    "impressions_organic": int(data["impressions_organic"]),
+                    "page_views_organic": int(data["page_views_organic"]),
                     "downloads_organic": int(data["downloads_organic"]),
                 }
             )
@@ -86,8 +86,8 @@ class PlayStoreExport(export_writer.ExportWriter):
         self.read_raw_data()
         self.read_downloads_organic()
         self.read_downloads_paid()
-        self.read_impressions_organic()
-        self.read_impressions_paid()
+        self.read_page_views_organic()
+        self.read_page_views_paid()
         self.read_convertion_rates_organic()
         self.read_convertion_rates_paid()
 
@@ -99,9 +99,9 @@ class PlayStoreExport(export_writer.ExportWriter):
         self.export(self.downloads_organic, "downloads_organic")
         self.export(self.downloads_paid, "downloads_paid")
 
-    def export_impressions(self):
-        self.export(self.impressions_organic, "impressions_organic")
-        self.export(self.impressions_paid, "impressions_paid")
+    def export_page_views(self):
+        self.export(self.page_views_organic, "page_views_organic")
+        self.export(self.page_views_paid, "page_views_paid")
 
     def export(self, data, kpi_name):
         self.export_daily(data, kpi_name)
@@ -121,24 +121,24 @@ class PlayStoreExport(export_writer.ExportWriter):
                 "downloads", 0
             ) - data.get("downloads_organic", 0)
 
-    def read_impressions_organic(self):
+    def read_page_views_organic(self):
         for date, country, data in self.data_generator():
-            self.impressions_organic.setdefault(date, {})[country] = data.get(
-                "impressions_organic", 0
+            self.page_views_organic.setdefault(date, {})[country] = data.get(
+                "page_views_organic", 0
             )
 
-    def read_impressions_paid(self):
+    def read_page_views_paid(self):
         for date, country, data in self.data_generator():
-            self.impressions_paid.setdefault(date, {})[country] = data.get(
-                "impressions", 0
-            ) - data.get("impressions_organic", 0)
+            self.page_views_paid.setdefault(date, {})[country] = data.get(
+                "page_views", 0
+            ) - data.get("page_views_organic", 0)
 
     def read_convertion_rates_organic(self):
         for date, country, data in self.data_generator():
             self.convertion_rates_organic.setdefault(date, {})[
                 country
             ] = func.convertion_rate(
-                data.get("downloads_organic", 0), data.get("impressions_organic", 0)
+                data.get("downloads_organic", 0), data.get("page_views_organic", 0)
             )
 
     def read_convertion_rates_paid(self):
@@ -147,7 +147,7 @@ class PlayStoreExport(export_writer.ExportWriter):
                 country
             ] = func.convertion_rate(
                 data.get("downloads", 0) - data.get("downloads_organic", 0),
-                data.get("impressions", 0) - data.get("impressions_organic", 0),
+                data.get("page_views", 0) - data.get("page_views_organic", 0),
             )
 
     def data_generator(self):
