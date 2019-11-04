@@ -7,7 +7,7 @@ from datetime import timedelta
 from exporter import config
 from exporter import bucket
 from exporter.utils import decorators
-from . import export
+from exporter.play_store import export
 
 logger = logging.getLogger(__name__)
 
@@ -23,9 +23,9 @@ def run(export_from, export_to):
     saved_files = download_reports(export_from, play_store_bucket)
     logger.info("Acquisition reports saved")
     logger.info("Updating export data")
-    for index in range(0, len(saved_files) - 1, 2):
-        total_data_filename = saved_files[index]
-        organic_data_filename = saved_files[index + 1]
+    for date, monthly_data in saved_files.items():
+        total_data_filename = monthly_data['total'] # TODO: jak wyjatek to zalogowac
+        organic_data_filename = monthly_data['organic']
         logger.info(
             f"Reading data from files: {total_data_filename}, {organic_data_filename}"
         )
@@ -37,19 +37,24 @@ def run(export_from, export_to):
         exporter.export_downloads()
         logger.info("Exporting convertsion rates")
         exporter.export_convertion_rates()
+        logger.info("Exporting impressions")
+        exporter.export_impressions()
         logger.info("Data updated")
-        logger.info("Upload data to s3")
         exporter.upload_files()
+        logger.info("Upload data to s3 done")
 
 
 def download_reports(export_from, bucket):
-    saved_files = []
-    for file_name in get_file_names_from_storage(bucket):
-        if not file_name.endswith("/") and report_download_condition(
-            export_from, file_name
+    saved_files = {}
+    for filepath in get_file_names_from_storage(bucket):
+        if not filepath.endswith("/") and report_download_condition(
+            export_from, filepath
         ):
-            download_file_from_storage(bucket, file_name)
-            saved_files.append(file_name.split("/")[-1])
+            download_file_from_storage(bucket, filepath)
+            date = get_play_store_report_date(filepath).strftime("%Y-%m")
+            filename = filepath.split("/")[-1]
+            data_type = "organic" if "play_country" in filename else "total"
+            saved_files.setdefault(date, {})[data_type] = filename
     return saved_files
 
 
@@ -63,14 +68,16 @@ def get_file_names_from_storage(bucket):
 
 
 def report_download_condition(export_from, file_name):
-    return export_from is None or get_play_store_report_date(file_name) >= export_from - timedelta(days=30)
+    return export_from is None or get_play_store_report_date(
+        file_name
+    ) >= export_from - timedelta(days=30)
 
 
 def get_play_store_report_date(name):
     try:
         return datetime.strptime(
             next((part for part in name.split("_") if part.isdigit())), "%Y%m"
-        ) 
+        )
     except StopIteration:
         logger.info(
             f"File {name} do not have assumed format."
