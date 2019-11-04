@@ -3,6 +3,7 @@ import csv
 from itertools import chain
 
 from exporter import config
+from exporter.utils import func
 from exporter.utils import export_writer
 
 
@@ -26,10 +27,6 @@ class AppStoreExportWriter(export_writer.ExportWriter):
 class AppStoreExport:
     def __init__(self):
         self.writer = AppStoreExportWriter()
-        self.downloads = {}
-        self.conversion_rate_searchers = {}
-        self.conversion_rate_browsers = {}
-        self.impressions = {}
 
     def write_exports(self):
         self.write_downloads_export()
@@ -49,34 +46,34 @@ class AppStoreExport:
             units_paid = (
                 data["units_all"] - data["units_browsers"] - data["units_searchers"]
             )
-            row[f"{country}_page_view_browsers"] = self.get_convertion_rate(
+            row[f"{country}_page_view_browsers"] = func.convertion_rate(
                 data["units_browsers"], data["page_view_unique_browsers"]
             )
-            row[f"{country}_impressions_browsers"] = self.get_convertion_rate(
+            row[f"{country}_impressions_browsers"] = func.convertion_rate(
                 data["units_browsers"], data["impressions_total_unique_browsers"]
             )
-            row[f"{country}_searchers"] = self.get_convertion_rate(
+            row[f"{country}_searchers"] = func.convertion_rate(
                 data["units_searchers"], data["impressions_total_unique_searchers"]
             )
-            row[f"{country}_search_ads"] = self.get_convertion_rate(
+            row[f"{country}_search_ads"] = func.convertion_rate(
                 data["downloads_search_ads"], data["impressions_search_ads"]
             )
-            row[f"{country}_total"] = self.get_convertion_rate(
+            row[f"{country}_total"] = func.convertion_rate(
                 data["units_all"], data["impressions_total_unique_all"]
             )
-            row[f"{country}_impressions_paid"] = self.get_convertion_rate(
+            row[f"{country}_impressions_paid"] = func.convertion_rate(
                 units_paid,
                 data["impressions_total_unique_all"]
                 - data["impressions_total_unique_searchers"]
                 - data["impressions_total_unique_browsers"],
             )
-            row[f"{country}_page_view_paid"] = self.get_convertion_rate(
+            row[f"{country}_page_view_paid"] = func.convertion_rate(
                 units_paid,
                 data["page_view_unique_all"]
                 - data["page_view_unique_browsers"]
                 - data["page_view_unique_searchers"],
             )
-            row[f"{country}_organic_searchers"] = self.get_convertion_rate(
+            row[f"{country}_organic_searchers"] = func.convertion_rate(
                 data["units_searchers"] - data["downloads_search_ads"],
                 data["impressions_total_unique_searchers"]
                 - data["impressions_search_ads"]
@@ -85,12 +82,6 @@ class AppStoreExport:
                 / data["impressions_total_all"],
             )
         return proccessed_data
-
-    def get_convertion_rate(self, downloads, denominator):
-        try:
-            return int(downloads) * 1.0 / int(denominator)
-        except ZeroDivisionError:
-            return None
 
     def get_downloads(self, all_data):
         proccessed_data = {}
