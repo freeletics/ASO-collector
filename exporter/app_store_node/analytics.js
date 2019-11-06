@@ -10,6 +10,7 @@ const MEASURE_IDS = [
   "impressions",
   "impressionsUnique",
   "pageViewUnique",
+  "pageViews",
   "units"
 ];
 
