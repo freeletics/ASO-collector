@@ -34,6 +34,13 @@ def play_store_raw_data(raw_data):
 
 
 @pytest.fixture()
+def csv_file(raw_data):
+    EXAMPLE_FILE_DIR = os.path.join(config.RAW_DATA_DIR, "example.csv")
+    TEST_CSV_FILE_DIR = os.path.join(os.getcwd(), "tests/test_raw_data/example.csv")
+    shutil.copyfile(TEST_CSV_FILE_DIR, EXAMPLE_FILE_DIR)
+
+
+@pytest.fixture()
 def play_store_exporter():
     return play_store_export.PlayStoreExport(
         "play_store.csv", "play_store_organic.csv", "play_store"
