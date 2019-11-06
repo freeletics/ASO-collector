@@ -54,12 +54,6 @@ class TestPlayStoreExport:
         exporter.export_downloads()
         assert os.path.exists(exporter.files_saved[0]) is True
 
-    def test_calculate_convertion_rate_return_procentage(self):
-        downloads = '4'
-        impressions = '10'
-        calculate_convertion_rate = export.PlayStoreExport.calculate_convertion_rate
-        assert calculate_convertion_rate(downloads, impressions) == 40.0
-
     def test_saving_export_updates_old_file(self, play_store_raw_data):
         exporter = export.PlayStoreExport(
             "play_store.csv", "play_store_organic.csv", "export_play_store"
@@ -81,10 +75,9 @@ class TestPlayStoreExport:
         )
 
     def test_export_filename(self, play_store_exporter):
-        assert (
-            play_store_exporter.get_export_filename("downloads", "monthly")
-            == os.path.join(config.EXPORTED_DATA_DIR, "play_store_downloads_monthly.csv")
-        )
+        assert play_store_exporter.get_export_filename(
+            "downloads", "monthly"
+        ) == os.path.join(config.EXPORTED_DATA_DIR, "play_store_downloads_monthly.csv")
 
 
 class TestPlayStoreScript:
@@ -124,3 +117,25 @@ class TestPlayStoreScript:
             is False
         )
 
+    @mock.patch(
+        "exporter.play_store.script.get_file_names_from_storage",
+        mock.Mock(
+            return_value=[
+                "retained_installers_com.glovo_201901_play_country.csv",
+                "retained_installers_com.glovo_201901_country.csv",
+            ]
+        ),
+    )
+    @mock.patch("exporter.play_store.script.download_file_from_storage", mock.Mock())
+    def test_download_reports_return_dict_with_data_pairs(self):
+        downloads_files = script.download_reports(
+            datetime.datetime(2019, 1, 1), mock.Mock()
+        )
+        assert (
+            downloads_files["2019-01"]["total"]
+            == "retained_installers_com.glovo_201901_country.csv"
+        )
+        assert (
+            downloads_files["2019-01"]["organic"]
+            == "retained_installers_com.glovo_201901_play_country.csv"
+        )
