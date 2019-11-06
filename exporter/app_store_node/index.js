@@ -15,38 +15,48 @@ const to = argv.to;
 getEverythingForPeriod(from, to);
 
 // TODO: dodac logowanie
-// TODO: dodac ladowanie pliku z raw data i nie powtarzanie requestow
 async function getEverythingForPeriod(from, to) {
   const connection = getConnection(USERNAME, PASSWORD);
   const startDate = moment.utc(from, "YYYY-MM-DD");
   const weekStartDate = startDate.clone();
   const monthStartDate = startDate.clone();
   const endDate = moment.utc(to, "YYYY-MM-DD");
-  const data = {}
+  const data = readRawData();
   while (monthStartDate <= endDate) {
     const startOfMonth = monthStartDate.clone().startOf("month");
-    console.log(startOfMonth)
+    console.log(startOfMonth);
     const endOfMonth = startOfMonth.clone().endOf("month");
     await getAppStoreData(data, startOfMonth, endOfMonth, "month", connection);
     monthStartDate.add(1, "month");
   }
   while (weekStartDate <= endDate) {
     const weekMonday = weekStartDate.clone().day("Monday");
-    console.log(weekMonday)
-    const weekSunday = weekMonday.clone().add(1, 'week').subtract(1, 'day');
+    console.log(weekMonday);
+    const weekSunday = weekMonday
+      .clone()
+      .add(1, "week")
+      .subtract(1, "day");
     await getAppStoreData(data, weekMonday, weekSunday, "week", connection);
     weekStartDate.add(1, "week");
-  } 
+  }
   while (startDate <= endDate) {
-    console.log(startDate)
+    console.log(startDate);
     await getAppStoreData(data, startDate, startDate, "day", connection);
     startDate.add(1, "day");
   }
 }
 
+function readRawData() {
+  try {
+    const contents = fs.readFileSync(OUTPUT);
+    return JSON.parse(contents);
+  } catch (e) {
+    console.log(e);
+    return {};
+  }
+}
 async function getAppStoreData(data, from, to, aggregation, connection) {
   await getAnalyticsData(data, from, to, aggregation, APP_ID, connection);
   await getSearchAdsData(data, from, to, aggregation, SEARCH_ADS_CREDENTIALS);
   fs.writeFileSync(OUTPUT, JSON.stringify(data, null, 2), "utf-8");
 }
-
