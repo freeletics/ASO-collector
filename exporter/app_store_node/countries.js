@@ -15,8 +15,8 @@ module.exports = {
     name: "Germany",
     appStoreCode: "143443"
   },
-  uk: {
-    name: "United Kingdom",
+  gb: {
+    name: "Grate Britain",
     appStoreCode: "143444"
   },
 };
