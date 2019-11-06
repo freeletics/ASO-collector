@@ -58,8 +58,12 @@ class AppStoreExport:
             row[f"{country}_search_ads"] = func.convertion_rate(
                 data["downloads_search_ads"], data["impressions_search_ads"]
             )
-            row[f"{country}_total"] = func.convertion_rate(
-                data["units_all"], data["impressions_total_unique_all"]
+            row[f"{country}_total_organic_impressions"] = func.convertion_rate(
+                data["units_browsers"]
+                + data["units_searchers"]
+                - data["downloads_search_ads"],
+                data["impressions_total_unique_browsers"]
+                + self.get_organic_searchers_impressions(data),
             )
             row[f"{country}_impressions_paid"] = func.convertion_rate(
                 units_paid,
@@ -91,14 +95,13 @@ class AppStoreExport:
             row[f"{country}_searchers"] = data["units_searchers"]
             row[f"{country}_browsers"] = data["units_browsers"]
             row[f"{country}_search_ads"] = data["downloads_search_ads"]
-            row[f"{country}_organic"] = (
-                data["units_searchers"]
-                + data["units_browsers"]
-                - data["downloads_search_ads"]
-            )
             row[f"{country}_organic_searchers"] = (
                 data["units_searchers"] - data["downloads_search_ads"]
             )
+            row[f"{country}_organic"] = (
+                data["units_browsers"] + row[f"{country}_organic_searchers"]
+            )
+            row[f"{country}_paid"] = row[f"{country}_all"] - row[f"{country}_organic"]
         return proccessed_data
 
     def get_impressions(self, all_data):
@@ -108,7 +111,28 @@ class AppStoreExport:
             row[f"{country}_all"] = data["impressions_total_unique_all"]
             row[f"{country}_searchers"] = data["impressions_total_unique_searchers"]
             row[f"{country}_browsers"] = data["impressions_total_unique_browsers"]
+            row[f"{country}_search_ads"] = data["impressions_search_ads"]
+            row[
+                f"{country}_organic_searchers"
+            ] = self.get_organic_searchers_impressions(data)
+            row[f"{country}_organic"] = (
+                data["impressions_total_unique_browsers"]
+                + row[f"{country}_organic_searchers"]
+            )
+            row[f"{country}_paid"] = (
+                data["impressions_total_unique_all"] - row[f"{country}_organic"]
+            )
         return proccessed_data
+
+    def get_organic_searchers_impressions(self, data):
+        return round(
+            (
+                data["impressions_total_unique_searchers"]
+                - data["impressions_search_ads"]
+                * data["impressions_total_unique_searchers"]
+                / data["impressions_total_unique_all"]
+            )
+        )
 
     def get_row_per_date(self, exported_data):
         proccessed_data = {}
@@ -154,7 +178,7 @@ class AppStoreExport:
                     f"{country}_impressions_browsers",
                     f"{country}_searchers",
                     f"{country}_search_ads",
-                    f"{country}_total",
+                    f"{country}_total_organic_impressions",
                     f"{country}_impressions_paid",
                     f"{country}_page_view_paid",
                     f"{country}_organic_searchers",
@@ -187,7 +211,7 @@ class AppStoreExport:
 
     def write_impressions_export(self):
         filed_list_params = ["date", *self.get_impressions_field_list()]
-        filename_template = "app_store_unique_impressions_{}s.csv"
+        filename_template = "app_store_impressions_{}s.csv"
         self.write_aggregation_exports(
             self.impressions, filename_template, filed_list_params
         )
@@ -195,7 +219,15 @@ class AppStoreExport:
     def get_impressions_field_list(self):
         return list(
             chain.from_iterable(
-                (f"{country}_all", f"{country}_searchers", f"{country}_browsers")
+                (
+                    f"{country}_all",
+                    f"{country}_searchers",
+                    f"{country}_browsers",
+                    f"{country}_search_ads",
+                    f"{country}_organic",
+                    f"{country}_organic_searchers",
+                    f"{country}_paid",
+                )
                 for country in config.COUNTRIES
             )
         )
