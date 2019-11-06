@@ -5,34 +5,9 @@ import BoxHeader from '../Widget/BoxHeader';
 import CountryChart from '../Widget/CountryChart';
 import withFilters from '../Filters/withFilters';
 import { defaultOptions, getChartData } from '../../services/chartService';
-import { notDate, dateLabels, isCountrySelected, getCountryFromKey } from './utils';
-
-const condition = (props, key, type) =>
-  notDate(key) && key.includes(type) && isCountrySelected(props, key);
+import { dateLabels, getSums, getCountries } from './utils';
 
 class AdjustInstalls extends React.Component {
-  getInstallsSum(data, type) {
-    return data.map(row =>
-      Object.entries(row).reduce((sum, [key, value]) => {
-        return condition(this.props, key, type) ? sum + Number(value) : sum;
-      }, 0),
-    );
-  }
-
-  getCountries(data, type) {
-    const datasets = {};
-    data.forEach(row =>
-      Object.entries(row).forEach(([key, value]) => {
-        if (condition(this.props, key, type)) {
-          const country = getCountryFromKey(key)
-          datasets[country] = datasets[country] ? datasets[country] : [];
-          datasets[country].push(value);
-        }
-      }),
-    );
-    return datasets;
-  }
-
   render() {
     const { dataIos, dataAndroid, colSizes } = this.props;
     return (
@@ -44,11 +19,12 @@ class AdjustInstalls extends React.Component {
                 <BoxHeader>Installs by type (IOS)</BoxHeader>
                 <Bar
                   data={getChartData(dateLabels(dataIos()), {
-                    'Organic installs': this.getInstallsSum(
+                    'Organic installs': getSums(
+                      this.props,
                       dataIos(),
                       'organic',
                     ),
-                    'Paid installs': this.getInstallsSum(dataIos(), 'paid'),
+                    'Paid installs': getSums(this.props, dataIos(), 'paid'),
                   })}
                   options={defaultOptions}
                 />
@@ -61,11 +37,12 @@ class AdjustInstalls extends React.Component {
                 <BoxHeader>Installs by type (Android)</BoxHeader>
                 <Bar
                   data={getChartData(dateLabels(dataAndroid()), {
-                    'Organic installs': this.getInstallsSum(
+                    'Organic installs': getSums(
+                      this.props,
                       dataAndroid(),
                       'organic',
                     ),
-                    'Paid installs': this.getInstallsSum(dataAndroid(), 'paid'),
+                    'Paid installs': getSums(this.props, dataAndroid(), 'paid'),
                   })}
                   options={defaultOptions}
                 />
@@ -82,7 +59,7 @@ class AdjustInstalls extends React.Component {
                   component={Bar}
                   data={{
                     labels: dateLabels(dataIos()),
-                    datasets: this.getCountries(dataIos(), 'organic'),
+                    datasets: getCountries(this.props, dataIos(), 'organic'),
                   }}
                   options={defaultOptions}
                 />
@@ -97,7 +74,7 @@ class AdjustInstalls extends React.Component {
                   component={Bar}
                   data={{
                     labels: dateLabels(dataAndroid()),
-                    datasets: this.getCountries(dataAndroid(), 'organic'),
+                    datasets: getCountries(this.props, dataAndroid(), 'organic'),
                   }}
                   options={defaultOptions}
                 />

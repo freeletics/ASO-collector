@@ -69,3 +69,28 @@ export function getValues(props, data, valueName, func) {
     ),
   );
 }
+
+const condition = (props, key, type) =>
+  notDate(key) && key.includes(type) && isCountrySelected(props, key);
+
+export function getSums(props, data, type) {
+  return data.map(row =>
+    Object.entries(row).reduce((sum, [key, value]) => {
+      return condition(props, key, type) ? sum + Number(value) : sum;
+    }, 0),
+  );
+}
+
+export function getCountries(props, data, type) {
+  const datasets = {};
+  data.forEach(row =>
+    Object.entries(row).forEach(([key, value]) => {
+      if (condition(props, key, type)) {
+        const country = getCountryFromKey(key);
+        datasets[country] = datasets[country] ? datasets[country] : [];
+        datasets[country].push(value);
+      }
+    }),
+  );
+  return datasets;
+}
