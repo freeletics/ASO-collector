@@ -1,4 +1,5 @@
 from exporter import config
+from exporter.utils import func
 from exporter.utils import export_writer
 
 
@@ -24,6 +25,7 @@ class Executor:
         raise NotImplementedError
 
     def execute(self, export_from, export_to):
+        export_from = self.optimize_export_from(export_from)
         params_list = self.get_params_list(export_from, export_to)
         exported_data = self.get_export_data(params_list, self.exporter)
         proccessed_data = self.get_proccessed_data(exported_data)
@@ -76,3 +78,17 @@ class Executor:
 
     def get_filename(self, platform_name, kpi):
         return f"{config.EXPORTED_DATA_DIR}/{self.source_name}_{kpi}_{platform_name}_days.csv"
+
+    def optimize_export_from(self, export_from):
+        if config.OPTIMIZE_EXPORT_FROM:
+            return self.get_last_date(export_from)
+        else:
+            return export_from
+
+    def get_last_date(self, export_from):
+        return max(
+            [
+                func.get_last_date(export_from, self.get_filename(platform, self.kpi))
+                for platform in self.apps.values()
+            ]
+        )

@@ -24,6 +24,8 @@ DATE_FORMAT = "%Y-%m-%d"
 LOG_FILE_NAME_DATE_FORMAT = "%Y-%m-%d"
 MOMENT_DATE_FORMAT = "YYYY-M-D"
 
+OPTIMIZE_EXPORT_FROM = True
+
 logging.basicConfig(
     filename=f"logs/{datetime.now().strftime(LOG_FILE_NAME_DATE_FORMAT)}.log",
     level=logging.INFO,
