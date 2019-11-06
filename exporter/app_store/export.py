@@ -31,12 +31,14 @@ class AppStoreExport:
     def write_exports(self):
         self.write_downloads_export()
         self.write_impressions_export()
+        self.write_page_views_export()
         self.write_conversion_rates_export()
 
     def proccessed_data(self, exported_data):
         self.data = self.get_row_per_date(exported_data)
         self.downloads = self.get_downloads(self.data)
         self.impressions = self.get_impressions(self.data)
+        self.page_views = self.get_page_views(self.data)
         self.conversion_rates = self.get_conversion_rates(self.data)
 
     def get_conversion_rates(self, all_data):
@@ -83,7 +85,7 @@ class AppStoreExport:
                 - data["impressions_search_ads"]
                 * 1.0
                 * data["impressions_total_unique_searchers"]
-                / data["impressions_total_all"],
+                / data["impressions_total_searchers"],
             )
         return proccessed_data
 
@@ -101,7 +103,12 @@ class AppStoreExport:
             row[f"{country}_organic"] = (
                 data["units_browsers"] + row[f"{country}_organic_searchers"]
             )
-            row[f"{country}_paid"] = row[f"{country}_all"] - row[f"{country}_organic"]
+            row[f"{country}_other_paid"] = (
+                row[f"{country}_all"]
+                - row[f"{country}_organic"]
+                - row[f"{country}_search_ads"]
+            )
+
         return proccessed_data
 
     def get_impressions(self, all_data):
@@ -119,8 +126,10 @@ class AppStoreExport:
                 data["impressions_total_unique_browsers"]
                 + row[f"{country}_organic_searchers"]
             )
-            row[f"{country}_paid"] = (
-                data["impressions_total_unique_all"] - row[f"{country}_organic"]
+            row[f"{country}_other_paid"] = (
+                row[f"{country}_all"]
+                - row[f"{country}_organic"]
+                - row[f"{country}_search_ads"]
             )
         return proccessed_data
 
@@ -130,7 +139,38 @@ class AppStoreExport:
                 data["impressions_total_unique_searchers"]
                 - data["impressions_search_ads"]
                 * data["impressions_total_unique_searchers"]
-                / data["impressions_total_unique_all"]
+                / data["impressions_total_searchers"]
+            )
+        )
+
+    def get_page_views(self, all_data):
+        proccessed_data = {}
+        for date, aggregation, country, data in self.data_generator(all_data):
+            row = proccessed_data.setdefault(date, {}).setdefault(aggregation, {})
+            row[f"{country}_all"] = data["page_view_unique_all"]
+            row[f"{country}_searchers"] = data["page_view_unique_searchers"]
+            row[f"{country}_browsers"] = data["page_view_unique_browsers"]
+            row[f"{country}_search_ads"] = data["taps_search_ads"]
+            row[f"{country}_organic_searchers"] = self.get_organic_searchers_page_views(
+                data
+            )
+            row[f"{country}_organic"] = (
+                data["page_view_unique_browsers"] + row[f"{country}_organic_searchers"]
+            )
+            row[f"{country}_other_paid"] = (
+                row[f"{country}_all"]
+                - row[f"{country}_organic"]
+                - row[f"{country}_search_ads"]
+            )
+        return proccessed_data
+
+    def get_organic_searchers_page_views(self, data):
+        return round(
+            (
+                data["page_view_unique_searchers"]
+                - data["taps_search_ads"]
+                * data["page_view_unique_searchers"]
+                / data["page_view_searchers"]
             )
         )
 
@@ -141,8 +181,6 @@ class AppStoreExport:
             proccessed_data.setdefault(raw_date, {}).setdefault(aggregation, {})[
                 country
             ] = {
-                "impressions_total_all": int(data["impressionsTotalAll"]),
-                "impressions_total_browsers": int(data["impressionsTotalBrowsers"]),
                 "impressions_total_searchers": int(data["impressionsTotalSearchers"]),
                 "impressions_total_unique_all": int(data["impressionsTotalUniqueAll"]),
                 "impressions_total_unique_browsers": int(
@@ -154,6 +192,7 @@ class AppStoreExport:
                 "page_view_unique_all": int(data["pageViewUniqueAll"]),
                 "page_view_unique_browsers": int(data["pageViewUniqueBrowsers"]),
                 "page_view_unique_searchers": int(data["pageViewUniqueSearchers"]),
+                "page_view_searchers": int(data.get("pageViewCountSearchers", 0)),
                 "units_all": int(data["unitsAll"]),
                 "units_browsers": int(data["unitsBrowsers"]),
                 "units_searchers": int(data["unitsSearchers"]),
@@ -168,6 +207,27 @@ class AppStoreExport:
         filename_template = "app_store_conversion_rates_{}s.csv"
         self.write_aggregation_exports(
             self.conversion_rates, filename_template, filed_list_params
+        )
+
+    def write_downloads_export(self):
+        filed_list_params = ["date", *self.get_downloads_field_list()]
+        filename_template = "app_store_downloads_{}s.csv"
+        self.write_aggregation_exports(
+            self.downloads, filename_template, filed_list_params
+        )
+
+    def write_impressions_export(self):
+        filed_list_params = ["date", *self.get_impressions_field_list()]
+        filename_template = "app_store_impressions_{}s.csv"
+        self.write_aggregation_exports(
+            self.impressions, filename_template, filed_list_params
+        )
+
+    def write_page_views_export(self):
+        filed_list_params = ["date", *self.get_page_views_field_list()]
+        filename_template = "app_store_page_views_{}s.csv"
+        self.write_aggregation_exports(
+            self.page_views, filename_template, filed_list_params
         )
 
     def get_conversion_rates_field_list(self):
@@ -187,13 +247,6 @@ class AppStoreExport:
             )
         )
 
-    def write_downloads_export(self):
-        filed_list_params = ["date", *self.get_downloads_field_list()]
-        filename_template = "app_store_downloads_{}s.csv"
-        self.write_aggregation_exports(
-            self.downloads, filename_template, filed_list_params
-        )
-
     def get_downloads_field_list(self):
         return list(
             chain.from_iterable(
@@ -204,33 +257,17 @@ class AppStoreExport:
                     f"{country}_search_ads",
                     f"{country}_organic",
                     f"{country}_organic_searchers",
+                    f"{country}_other_paid",
                 )
                 for country in config.COUNTRIES
             )
-        )
-
-    def write_impressions_export(self):
-        filed_list_params = ["date", *self.get_impressions_field_list()]
-        filename_template = "app_store_impressions_{}s.csv"
-        self.write_aggregation_exports(
-            self.impressions, filename_template, filed_list_params
         )
 
     def get_impressions_field_list(self):
-        return list(
-            chain.from_iterable(
-                (
-                    f"{country}_all",
-                    f"{country}_searchers",
-                    f"{country}_browsers",
-                    f"{country}_search_ads",
-                    f"{country}_organic",
-                    f"{country}_organic_searchers",
-                    f"{country}_paid",
-                )
-                for country in config.COUNTRIES
-            )
-        )
+        return self.get_downloads_field_list()
+
+    def get_page_views_field_list(self):
+        return self.get_downloads_field_list()
 
     def write_aggregation_exports(self, data, filename_template, filed_list_params):
         self.write_export(data, filename_template, filed_list_params, "day")
