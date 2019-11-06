@@ -25,7 +25,7 @@ class TestPlayStoreExport:
             exporter.read_raw_data()
 
     def test_saving_export_creates_new_files(self, play_store_raw_data):
-        EXPECTED_KPI = 4
+        EXPECTED_KPI = 2
         EXPECTED_AGGREGATIONS = 1
         exporter = export.PlayStoreExport(
             "play_store.csv", "play_store_organic.csv", "export_play_store"
@@ -44,7 +44,7 @@ class TestPlayStoreExport:
             "play_store.csv", "play_store_organic.csv", "export_play_store"
         )
         exporter.read_all()
-        assert exporter.downloads_organic["2019-03-01"]["br"] is not None
+        assert exporter.downloads["2019-03-01"]["br_organic"] is not None
 
     def test_export_downloads(self, play_store_raw_data):
         exporter = export.PlayStoreExport(
@@ -69,7 +69,7 @@ class TestPlayStoreExport:
             [
                 a == b
                 for a, b in zip(
-                    play_store_exporter.get_field_list(), ["date", "ar", "br"]
+                    play_store_exporter.get_field_list(), ["date", "ar_organic", "ar_paid", "br_organic", "br_paid"]
                 )
             ]
         )

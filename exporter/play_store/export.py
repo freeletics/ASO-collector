@@ -1,6 +1,7 @@
 import os
 import csv
 import copy
+from itertools import chain
 from exporter import config
 from exporter.utils import func
 from exporter.utils import export_writer
@@ -23,11 +24,11 @@ class PlayStoreExport(export_writer.ExportWriter):
         self.raw_data = []
         self.raw_data_organic = []
         self.raw_data_combined = {}
-        self.downloads_organic = {}
+        self.downloads = {}
         self.downloads_paid = {}
-        self.page_views_organic = {}
+        self.page_views = {}
         self.page_views_paid = {}
-        self.convertion_rates_organic = {}
+        self.convertion_rates = {}
         self.convertion_rates_paid = {}
 
     def read_raw_data(self):
@@ -84,24 +85,18 @@ class PlayStoreExport(export_writer.ExportWriter):
 
     def read_all(self):
         self.read_raw_data()
-        self.read_downloads_organic()
-        self.read_downloads_paid()
-        self.read_page_views_organic()
-        self.read_page_views_paid()
-        self.read_convertion_rates_organic()
-        self.read_convertion_rates_paid()
+        self.read_downloads()
+        self.read_page_views()
+        self.read_convertion_rates()
 
     def export_convertion_rates(self):
-        self.export(self.convertion_rates_organic, "converstion_rates_organic")
-        self.export(self.convertion_rates_paid, "converstion_rates_paid")
+        self.export(self.convertion_rates, "converstion_rates")
 
     def export_downloads(self):
-        self.export(self.downloads_organic, "downloads_organic")
-        self.export(self.downloads_paid, "downloads_paid")
+        self.export(self.downloads, "downloads")
 
     def export_page_views(self):
-        self.export(self.page_views_organic, "page_views_organic")
-        self.export(self.page_views_paid, "page_views_paid")
+        self.export(self.page_views, "page_views")
 
     def export(self, data, kpi_name):
         self.export_daily(data, kpi_name)
@@ -109,42 +104,34 @@ class PlayStoreExport(export_writer.ExportWriter):
     def get_date_country(self, data):
         return data["date"], data["country"].lower()
 
-    def read_downloads_organic(self):
+    def read_downloads(self):
         for date, country, data in self.data_generator():
-            self.downloads_organic.setdefault(date, {})[country] = data.get(
+            self.downloads.setdefault(date, {})[f"{country}_organic"] = data.get(
                 "downloads_organic", 0
             )
-
-    def read_downloads_paid(self):
         for date, country, data in self.data_generator():
-            self.downloads_paid.setdefault(date, {})[country] = data.get(
+            self.downloads.setdefault(date, {})[f"{country}_paid"] = data.get(
                 "downloads", 0
             ) - data.get("downloads_organic", 0)
 
-    def read_page_views_organic(self):
+    def read_page_views(self):
         for date, country, data in self.data_generator():
-            self.page_views_organic.setdefault(date, {})[country] = data.get(
+            self.page_views.setdefault(date, {})[f"{country}_organic"] = data.get(
                 "page_views_organic", 0
             )
-
-    def read_page_views_paid(self):
-        for date, country, data in self.data_generator():
-            self.page_views_paid.setdefault(date, {})[country] = data.get(
+            self.page_views.setdefault(date, {})[f"{country}_paid"] = data.get(
                 "page_views", 0
             ) - data.get("page_views_organic", 0)
 
-    def read_convertion_rates_organic(self):
+    def read_convertion_rates(self):
         for date, country, data in self.data_generator():
-            self.convertion_rates_organic.setdefault(date, {})[
-                country
+            self.convertion_rates.setdefault(date, {})[
+                f"{country}_organic"
             ] = func.convertion_rate(
                 data.get("downloads_organic", 0), data.get("page_views_organic", 0)
             )
-
-    def read_convertion_rates_paid(self):
-        for date, country, data in self.data_generator():
-            self.convertion_rates_paid.setdefault(date, {})[
-                country
+            self.convertion_rates.setdefault(date, {})[
+                f"{country}_paid"
             ] = func.convertion_rate(
                 data.get("downloads", 0) - data.get("downloads_organic", 0),
                 data.get("page_views", 0) - data.get("page_views_organic", 0),
@@ -162,26 +149,10 @@ class PlayStoreExport(export_writer.ExportWriter):
                 country_data = data.pop(date)
                 writer.writerow(self.get_row(date, country_data))
             except KeyError:
-                writer.writerow(
-                    {
-                        "date": row["date"],
-                        **{
-                            country: row[country]
-                            for country in config.COUNTRIES
-                            if row.get(country)
-                        },
-                    }
-                )
+                writer.writerow(row)
 
     def get_row(self, date, data):
-        return {
-            "date": date,
-            **{
-                country: value
-                for country, value in data.items()
-                if country in config.COUNTRIES
-            },
-        }
+        return {"date": date, **data}
 
     def export_daily(self, data, kpi_name):
         filename = self.get_export_filename(kpi_name, "days")
@@ -205,4 +176,13 @@ class PlayStoreExport(export_writer.ExportWriter):
 
     @staticmethod
     def get_field_list():
-        return ["date", *config.COUNTRIES]
+        return [
+            "date",
+            *list(
+                chain.from_iterable(
+                    (f"{country}_organic", f"{country}_paid")
+                    for country in config.COUNTRIES
+                )
+            ),
+        ]
+
