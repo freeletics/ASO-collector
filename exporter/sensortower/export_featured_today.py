@@ -28,6 +28,7 @@ class FeaturedWriter(export_writer.ExportWriter):
 class FeaturedTodayExecutor(utils.Executor):
     kpi = "featured_today"
     export_writer_class = FeaturedWriter
+    apps = { config.SENSORTOWER_IOS_ID: config.PLATFORM_IOS }
 
     def write_export(self, data):
         self.write_export_for_platform(self.writer, data, "ios")
@@ -78,9 +79,9 @@ class FeaturedTodayExecutor(utils.Executor):
             exported_data.extend(data)
         return exported_data
 
-    def get_params(self, export_from, export_to, country):
+    def get_params(self, export_from, export_to, app_id, platform, country):
         return (
-            config.PLATFORM_IOS,
+            platform,
             {
                 "country": country.upper(),
                 "start_date": export_from.strftime(config.DATE_FORMAT),
@@ -88,10 +89,3 @@ class FeaturedTodayExecutor(utils.Executor):
                 "auth_token": config.SENSORTOWER_AUTH_TOKEN,
             },
         )
-
-    def get_params_list(self, export_from, export_to):
-        params_list = []
-        for country in config.COUNTRIES:
-            params = self.get_params(export_from, export_to, country)
-            params_list.append(params)
-        return params_list
