@@ -42,7 +42,7 @@ class ExportWriter:
         data_copy = copy.copy(data)
         func.touch(filename)
         with context_managers.update_file(filename) as (old_file, temp_file):
-            writer = csv.DictWriter(temp_file, fieldnames=field_list)
+            writer = csv.DictWriter(temp_file, fieldnames=field_list, extrasaction='ignore')
             writer.writeheader()
             try:
                 self.update_old_rows(writer, old_file, data_copy)
