@@ -46,13 +46,19 @@ class Executor:
         params_list = []
         for country in config.COUNTRIES:
             for app_id, platform in self.apps.items():
-                params = self.get_params(export_from, export_to, app_id, platform, country)
+                params = self.get_params(
+                    export_from, export_to, app_id, platform, country
+                )
                 params_list.append(params)
         return params_list
 
     def write_export(self, data):
-        self.write_export_for_platform(self.writer, data, "ios", self.ios_field_list_params)
-        self.write_export_for_platform(self.writer, data, "android", self.android_field_list_params)
+        self.write_export_for_platform(
+            self.writer, data, "ios", self.ios_field_list_params
+        )
+        self.write_export_for_platform(
+            self.writer, data, "android", self.android_field_list_params
+        )
 
     def write_export_for_platform(self, writer, data, platform_name, filed_list_params):
         filename_ios = self.get_filename(platform_name, self.kpi)
