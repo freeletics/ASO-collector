@@ -13,9 +13,13 @@ export const sumList = values =>
 
 export const sum = (total, value) => total + Number(value);
 
+export const getCountryFromKey = key => key.split('_')[0];
+
 export const isCountrySelected = (props, country) =>
   !props.params.selectedCountries.length ||
-  props.params.selectedCountries.map(option => option.value).includes(country);
+  props.params.selectedCountries
+    .map(option => option.value)
+    .includes(getCountryFromKey(country));
 
 export const getCountryCode = key => key.split(/_(.+)/)[0];
 
