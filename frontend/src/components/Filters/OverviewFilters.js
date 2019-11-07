@@ -37,6 +37,9 @@ class OverviewFilters extends React.Component {
         .toDate(),
     };
     const params = queryString.parse(this.state.history.location.search);
+    if (Object.entries(params).length) {
+      this.state.selectedCountries = [];
+    }
     Object.entries(params).forEach(([name, value]) => {
       if (name === 'aggregation') {
         this.state.selectedAggregation = config.aggregationOptions.find(
@@ -53,9 +56,12 @@ class OverviewFilters extends React.Component {
   }
 
   handleAggregationChange = selectedAggregation => {
-    this.setState({
-      selectedAggregation: selectedAggregation ? selectedAggregation : [],
-    }, this.updateChildren);
+    this.setState(
+      {
+        selectedAggregation: selectedAggregation ? selectedAggregation : [],
+      },
+      this.updateChildren,
+    );
   };
 
   handleChartSizeChange = () => {
@@ -66,37 +72,41 @@ class OverviewFilters extends React.Component {
           : CHART_SIZE_HALF,
     });
   };
+
   handleCountryChange = selectedCountries => {
     this.setState({
       selectedCountries: selectedCountries ? selectedCountries : [],
-    });
+    }, this.updateQueryParams);
   };
 
   handleFromDateChange = date => {
     this.setState({
       fromDate: date < this.state.toDate ? date : this.state.toDate,
-    });
+    }, this.updateQueryParams);
   };
 
   handleToDateChange = date => {
-    this.setState({ toDate: date });
+    this.setState({ toDate: date }, this.updateQueryParams);
   };
 
   handleFromCompareDateChange = date => {
     this.setState({
       fromCompareDate: date < this.state.toDate ? date : this.state.toDate,
-    });
+    }, this.updateQueryParams);
   };
 
   handleToCompareDateChange = date => {
-    this.setState({ toCompareDate: date });
+    this.setState({ toCompareDate: date }, this.updateQueryParams);
   };
 
-  updateChildren = () => {
+  updateQueryParams = () =>
     this.state.history.push({
       pathname: this.state.history.location.pathname,
       search: queryParams(this.state),
     });
+
+  updateChildren = () => {
+    this.updateQueryParams()
     this.state.children.forEach(child => child.update());
   };
 
