@@ -26,6 +26,11 @@ export const getCountryCode = key => key.split(/_(.+)/)[0];
 export const getPercent = (value, total) =>
   parseFloat(((value * 1.0) / total) * 100).toFixed(1);
 
+export const formatPercent = value =>
+  !isNaN(value) ? `${parseFloat(value).toFixed(2)}%` : 'N/A';
+
+export const getFormatedPercent = (...args) => formatPercent(avg(getAvgs(...args)));
+
 export const reduce = (props, data, filedName) =>
   getSums(props, data, filedName).reduce(sum, 0);
 
@@ -80,13 +85,24 @@ export function getValues(props, data, valueName, func) {
 }
 
 const condition = (props, key, type) =>
-  notDate(key) && key.includes(type) && isCountrySelected(props, key);
+  notDate(key) &&
+  key
+    .split('_')
+    .slice(1)
+    .join('_') == type &&
+  isCountrySelected(props, key);
 
 export function getSums(props, data, type) {
   return data.map(row =>
     Object.entries(row).reduce((sum, [key, value]) => {
       return condition(props, key, type) ? sum + Number(value) : sum;
     }, 0),
+  );
+}
+
+export function getAvgs(props, data, type) {
+  return data.map(row =>
+    avgList(Object.entries(row).filter(([key, _]) => condition(props, key, type))),
   );
 }
 
