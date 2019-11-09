@@ -75,7 +75,6 @@ class NewDownloads extends React.Component {
       paid: paidAndroid,
       total: organicAndroid + paidAndroid,
     };
-    console.log(downloadsAndroid);
     return (
       <div>
         <Row className="justify-content">

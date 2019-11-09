@@ -28,10 +28,7 @@ const withFilters = (WrappedComponent, ...dataSources) => {
     processData(data) {
       const fieldNames = data.shift();
       return data.map(row =>
-        row.reduce(
-          (o, value, index) => ({ ...o, [fieldNames[index]]: value }),
-          {},
-        ),
+        row.reduce((o, value, index) => ({ ...o, [fieldNames[index]]: value }), {}),
       );
     }
 
@@ -57,10 +54,9 @@ const withFilters = (WrappedComponent, ...dataSources) => {
       }
       return aggregation;
     }
+
     allLoaded() {
-      return dataSources.map(
-        ([_, dataName]) => this.state['loaded' + dataName],
-      );
+      return dataSources.map(([_, dataName]) => this.state['loaded' + dataName]);
     }
 
     dates() {
@@ -72,10 +68,12 @@ const withFilters = (WrappedComponent, ...dataSources) => {
       const { fromCompareDate, toCompareDate } = this.props.params;
       return { from: fromCompareDate, to: toCompareDate };
     }
+
+    data = name => getRange(this.dates(), this.state[name]);
+
     dataIos = (name = 'dataIos') => getRange(this.dates(), this.state[name]);
 
-    dataAndroid = (name = 'dataAndroid') =>
-      getRange(this.dates(), this.state[name]);
+    dataAndroid = (name = 'dataAndroid') => getRange(this.dates(), this.state[name]);
 
     dataIosCompare = (name = 'dataIos') =>
       getRange(this.datesCompare(), this.state[name]);
@@ -87,6 +85,7 @@ const withFilters = (WrappedComponent, ...dataSources) => {
       return this.allLoaded().every(x => Boolean(x)) ? (
         <WrappedComponent
           {...this.props}
+          data={this.data}
           dataAndroid={this.dataAndroid}
           dataIos={this.dataIos}
           dataAndroidCompare={this.dataAndroidCompare}

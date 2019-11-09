@@ -11,7 +11,6 @@ import { dateLabels, getSums, getCountries } from './utils';
 class Downloads extends React.Component {
   render() {
     const { dataIos, dataAndroid, colSizes } = this.props;
-    console.log(dateLabels(dataIos()));
     return (
       <div>
         <Row>

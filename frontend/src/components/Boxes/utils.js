@@ -29,6 +29,11 @@ export const getPercent = (value, total) =>
 export const reduce = (props, data, filedName) =>
   getSums(props, data, filedName).reduce(sum, 0);
 
+export const capitalize = s => {
+  if (typeof s !== 'string') return '';
+  return s.charAt(0).toUpperCase() + s.slice(1);
+};
+
 export const getReviewsDatasets = (props, data) => ({
   Average: {
     type: 'line',
@@ -85,14 +90,30 @@ export function getSums(props, data, type) {
   );
 }
 
+export const setDefault = (obj, key, defaultValue, value) => {
+  obj[key] = obj[key] ? obj[key] : defaultValue;
+  obj[key].push(value);
+};
+
+export function getKeywords(data) {
+  const datasets = {};
+  data.forEach(row =>
+    Object.entries(row).forEach(([key, value]) => {
+      if (notDate(key)) {
+        setDefault(datasets, key, [], value);
+      }
+    }),
+  );
+  return datasets;
+}
+
 export function getCountries(props, data, type) {
   const datasets = {};
   data.forEach(row =>
     Object.entries(row).forEach(([key, value]) => {
       if (condition(props, key, type)) {
         const country = getCountryFromKey(key);
-        datasets[country] = datasets[country] ? datasets[country] : [];
-        datasets[country].push(value);
+        setDefault(datasets, country, [], value);
       }
     }),
   );
