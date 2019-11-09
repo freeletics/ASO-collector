@@ -1,19 +1,11 @@
 import React from 'react';
-import {
-  Table,
-  Card,
-  CardBody,
-  Row,
-  Col,
-  ListGroup,
-  ListGroupItem,
-} from 'reactstrap';
+import { Card, CardBody, Row, Col, ListGroup, ListGroupItem } from 'reactstrap';
 import { Doughnut } from 'react-chartjs-2';
 import { defaultColors } from '../../config/colors';
 import BoxHeader from '../Widget/BoxHeader';
 import PercentageWidget from '../Widget/PercentageWidget';
 import withFilters from '../Filters/withFilters';
-import { dateLabels, getSums, sum, getCountries } from './utils';
+import { reduce } from './utils';
 
 class InstallsDoughnut extends React.Component {
   getChartData(data) {
@@ -38,12 +30,10 @@ class InstallsDoughnut extends React.Component {
 
   render() {
     const { dataIos, dataAndroid } = this.props;
-    const organicAndroid = getSums(this.props, dataAndroid(), 'organic').reduce(
-      sum,
-    );
-    const organicIos = getSums(this.props, dataIos(), 'organic').reduce(sum);
-    const paidAndroid = getSums(this.props, dataAndroid(), 'paid').reduce(sum);
-    const paidIos = getSums(this.props, dataIos(), 'paid').reduce(sum);
+    const organicAndroid = reduce(this.props, dataAndroid(), 'organic');
+    const organicIos = reduce(this.props, dataIos(), 'organic');
+    const paidAndroid = reduce(this.props, dataAndroid(), 'paid');
+    const paidIos = reduce(this.props, dataIos(), 'paid');
     const installsIos = this.getData(organicIos, paidIos);
     const installsAndroid = this.getData(organicAndroid, paidAndroid);
     return (
@@ -87,9 +77,7 @@ class InstallsDoughnut extends React.Component {
             <Card>
               <CardBody>
                 <BoxHeader>Installs (Android)</BoxHeader>
-                <Doughnut
-                  data={this.getChartData([organicAndroid, paidAndroid])}
-                />
+                <Doughnut data={this.getChartData([organicAndroid, paidAndroid])} />
                 <ListGroup flush>
                   <ListGroupItem className="p-1">
                     <PercentageWidget

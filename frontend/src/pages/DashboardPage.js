@@ -7,12 +7,14 @@ import Rating from '../components/Boxes/Ratings';
 import RatingComparison from '../components/Boxes/RatingComparison';
 import FeaturingList from '../components/Boxes/FeaturingList';
 import InstallsDoughnut from '../components/Boxes/InstallsDoughnut';
+import NewDownloads from '../components/Boxes/NewDownloads';
 
 class DashboardPage extends React.Component {
   render() {
     return (
       <Page className="DashboardPage" title="Regional">
         <OverviewFilters>
+          <NewDownloads></NewDownloads>
           <InstallsDoughnut></InstallsDoughnut>
           <Installs></Installs>
           <FeaturingList></FeaturingList>

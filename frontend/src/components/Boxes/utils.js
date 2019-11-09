@@ -23,6 +23,12 @@ export const isCountrySelected = (props, country) =>
 
 export const getCountryCode = key => key.split(/_(.+)/)[0];
 
+export const getPercent = (value, total) =>
+  parseFloat(((value * 1.0) / total) * 100).toFixed(1);
+
+export const reduce = (props, data, filedName) =>
+  getSums(props, data, filedName).reduce(sum, 0);
+
 export const getReviewsDatasets = (props, data) => ({
   Average: {
     type: 'line',
@@ -37,9 +43,7 @@ export const getReviewsDatasets = (props, data) => ({
 });
 
 export const getAvg = (props, data) =>
-  avg(
-    getValues(props, data, 'average', avgList).filter(value => !isNaN(value)),
-  );
+  avg(getValues(props, data, 'average', avgList).filter(value => !isNaN(value)));
 
 export function getCountriesAvg(props, data) {
   const datasets = {};
