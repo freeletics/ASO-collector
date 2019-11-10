@@ -76,27 +76,27 @@ class OverviewFilters extends React.Component {
   handleCountryChange = selectedCountries => {
     this.setState({
       selectedCountries: selectedCountries ? selectedCountries : [],
-    }, this.updateQueryParams);
+    }, this.updateChildren);
   };
 
   handleFromDateChange = date => {
     this.setState({
       fromDate: date < this.state.toDate ? date : this.state.toDate,
-    }, this.updateQueryParams);
+    }, this.updateChildren);
   };
 
   handleToDateChange = date => {
-    this.setState({ toDate: date }, this.updateQueryParams);
+    this.setState({ toDate: date }, this.updateChildren);
   };
 
   handleFromCompareDateChange = date => {
     this.setState({
       fromCompareDate: date < this.state.toDate ? date : this.state.toDate,
-    }, this.updateQueryParams);
+    }, this.updateChildren);
   };
 
   handleToCompareDateChange = date => {
-    this.setState({ toCompareDate: date }, this.updateQueryParams);
+    this.setState({ toCompareDate: date }, this.updateChildren);
   };
 
   updateQueryParams = () =>

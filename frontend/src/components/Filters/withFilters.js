@@ -1,4 +1,5 @@
 import React from 'react';
+import * as CSV from 'csv-string';
 import moment from 'moment';
 import fetchData from '../../services/fetchData';
 
@@ -7,29 +8,55 @@ export const getRange = ({ from, to }, data) =>
     row => from <= moment(row.date).toDate() && to >= moment(row.date).toDate(),
   );
 
+export class Wrapper extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      loaded: false,
+    };
+  }
+
+  componentDidMount() {
+    this.props.onRef(this);
+    this.update();
+  }
+
+  componentWillUnmount() {
+    this.props.onRef(undefined);
+  }
+
+  dates() {
+    const { fromDate, toDate } = this.props.params;
+    return { from: fromDate, to: toDate };
+  }
+
+  data = name => getRange(this.dates(), this.state[name]);
+}
+
 const withFilters = (WrappedComponent, ...dataSources) => {
-  return class extends React.Component {
-    constructor(props) {
-      super(props);
-      this.state = {
-        loaded: false,
-      };
-    }
-
-    componentDidMount() {
-      this.props.onRef(this);
-      this.update();
-    }
-
-    componentWillUnmount() {
-      this.props.onRef(undefined);
-    }
-
-    processData(data) {
+  return class extends Wrapper {
+    processData(rawString) {
+      const data = CSV.parse(rawString);
       const fieldNames = data.shift();
       return data.map(row =>
         row.reduce((o, value, index) => ({ ...o, [fieldNames[index]]: value }), {}),
       );
+    }
+
+    getAggregation(base, aggregation) {
+      if (base.includes('featured') || base.includes('timeline')) {
+        aggregation = 'days';
+      }
+      return aggregation;
+    }
+
+    getFilename(base, aggregation) {
+      return `${base}_${this.getAggregation(base, aggregation)}.csv`;
+    }
+
+    datesCompare() {
+      const { fromCompareDate, toCompareDate } = this.props.params;
+      return { from: fromCompareDate, to: toCompareDate };
     }
 
     update() {
@@ -44,29 +71,8 @@ const withFilters = (WrappedComponent, ...dataSources) => {
       });
     }
 
-    getFilename(base, aggregation) {
-      return `${base}_${this.getAggregation(base, aggregation)}.csv`;
-    }
-
-    getAggregation(base, aggregation) {
-      if (base.includes('featured') || base.includes('timeline')) {
-        aggregation = 'days';
-      }
-      return aggregation;
-    }
-
     allLoaded() {
       return dataSources.map(([_, dataName]) => this.state['loaded' + dataName]);
-    }
-
-    dates() {
-      const { fromDate, toDate } = this.props.params;
-      return { from: fromDate, to: toDate };
-    }
-
-    datesCompare() {
-      const { fromCompareDate, toCompareDate } = this.props.params;
-      return { from: fromCompareDate, to: toCompareDate };
     }
 
     data = name => getRange(this.dates(), this.state[name]);

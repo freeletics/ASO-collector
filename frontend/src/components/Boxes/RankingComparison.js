@@ -151,7 +151,6 @@ const RankingComparisonWidget = ({ title, subtitle, number, numberCompare }) => 
 };
 
 const LifestyleChartBox = ({ data, labels, title }) => {
-  console.log(labels, data)
   return (
     <Card>
       <CardBody>

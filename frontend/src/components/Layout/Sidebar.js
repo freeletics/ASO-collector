@@ -2,7 +2,6 @@ import React from 'react';
 import {
   MdDashboard,
   MdLocalAirport,
-  MdAcUnit,
   MdExtension,
   MdKeyboardArrowDown,
 } from 'react-icons/md';

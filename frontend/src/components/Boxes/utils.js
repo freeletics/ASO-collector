@@ -6,7 +6,8 @@ export const avgList = values =>
   values.reduce((total, [_, value]) => sum(total, value), 0) / values.length;
 
 export const avg = values =>
-  values.reduce((total, value) => sum(total, value), 0) / values.length;
+  values.reduce((total, value) => sum(total, value), 0) /
+  values.filter(value => value).length;
 
 export const sumList = values =>
   values.reduce((total, [_, value]) => sum(total, value), 0);
@@ -89,7 +90,7 @@ const condition = (props, key, type) =>
   key
     .split('_')
     .slice(1)
-    .join('_') == type &&
+    .join('_') === type &&
   isCountrySelected(props, key);
 
 export function getSums(props, data, type) {

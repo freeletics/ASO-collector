@@ -1,5 +1,6 @@
 import React from 'react';
-import { CardImg, Button, Table } from 'reactstrap';
+import moment from 'moment';
+import { CardImg, Table } from 'reactstrap';
 import VersionChangeRow from './VersionChangeRow';
 import VersionTextRow from './VersionTextRow';
 import BoxHeader from '../Widget/BoxHeader';
@@ -23,131 +24,120 @@ class VersionWidget extends React.Component {
 
   render() {
     const {
-      releaseDate,
-      title,
-      country,
-      subtitle,
-      video,
-      videoImg,
-      screenshots,
-      promoBanner,
-      shortDescription,
+      date,
       description,
-      platform,
-      titlePrevious,
-      subtitlePrevious,
-      videoPrevious,
-      videoImgPrevious,
-      screenshotsPrevious,
-      promoBannerPrevious,
-      shortDescriptionPrevious,
-      descriptionPrevious,
+      icon,
+      imessage_screenshot,
+      name,
+      promo_text,
+      screenshot,
+      subtitle,
+      version,
     } = this.props;
-    const videoUrlProps =
-      platform === 'android' ? { target: '_blank' } : { download: true };
     const openChangesProps = {
       onClick: this.onClick,
       changesVisible: this.state.changesVisible,
     };
-    return (
+    return name ||
+      description ||
+      subtitle ||
+      screenshot ||
+      icon ||
+      imessage_screenshot ||
+      promo_text ||
+      imessage_screenshot ? (
       <div className="p-4">
         <BoxHeader className="align-left margin-left-10">
-          {releaseDate}{' '}
-          <div className="upper-case">
-            {country} {platform}
-          </div>
+          {moment.utc(date).format('YYYY-MM-DD')}
+          {version && `, version: ${version.after}`}
         </BoxHeader>
         <Table className="align-top">
           <thead>
-              { this.state.changesVisible ? (
-            <tr>
-              <th>Changes </th>
-              <th>Previous version</th>
-              <th>Current version</th>
-            </tr>
-              ) : <tr><th>Changes </th></tr> }
+            {this.state.changesVisible ? (
+              <tr>
+                <th>Changes </th>
+                <th>Previous version</th>
+                <th>Current version</th>
+              </tr>
+            ) : (
+              <tr>
+                <th>Changes </th>
+              </tr>
+            )}
           </thead>
-          <tbody className={this.state.changesVisible ? "" : "flex"}>
+          <tbody className={this.state.changesVisible ? '' : 'flex'}>
             <VersionTextRow
               attributeName="Title"
-              changed={title || titlePrevious}
-              currentValue={title}
-              previousValue={titlePrevious}
+              changed={name}
+              currentValue={name && name.after}
+              previousValue={name && name.before}
               {...openChangesProps}
             />
             <VersionTextRow
               attributeName="Subtitle"
-              changed={subtitle || subtitlePrevious}
-              currentValue={subtitle}
-              previousValue={subtitlePrevious}
-            />
-            <VersionChangeRow
-              attributeName="Banner"
-              changed={promoBanner || promoBannerPrevious}
-              currentValue={<CardImg top src={promoBanner}></CardImg>}
-              previousValue={<CardImg top src={promoBannerPrevious}></CardImg>}
+              changed={subtitle}
+              currentValue={subtitle && subtitle.after}
+              previousValue={subtitle && subtitle.before}
               {...openChangesProps}
             />
             <VersionTextRow
-              attributeName="Short description"
-              changed={shortDescription || shortDescription}
-              currentValue={shortDescription}
-              previousValue={shortDescriptionPrevious}
+              attributeName="Subtitle"
+              changed={promo_text}
+              currentValue={promo_text && promo_text.after}
+              previousValue={promo_text && promo_text.before}
+              {...openChangesProps}
+            />
+            <VersionChangeRow
+              attributeName="Icon"
+              changed={icon}
+              currentValue={<CardImg top src={icon && icon.after.url}></CardImg>}
+              previousValue={<CardImg top src={icon && icon.before.url}></CardImg>}
               {...openChangesProps}
             />
             <VersionTextRow
               attributeName="Description"
-              changed={description || descriptionPrevious}
-              currentValue={description}
-              previousValue={descriptionPrevious}
-              {...openChangesProps}
-            />
-            <VersionChangeRow
-              attributeName="Video image"
-              changed={videoImg || videoImgPrevious}
-              currentValue={<CardImg top src={videoImg}></CardImg>}
-              previousValue={<CardImg top src={videoImgPrevious}></CardImg>}
-              {...openChangesProps}
-            />
-            <VersionChangeRow
-              attributeName="Video"
-              changed={video || videoPrevious}
-              currentValue={
-                video && (
-                  <a href={video} {...videoUrlProps}>
-                    <Button size="m" className="primary border-0" block>
-                      Video
-                    </Button>
-                  </a>
-                )
-              }
-              previousValue={
-                videoPrevious && (
-                  <a href={videoPrevious} {...videoUrlProps}>
-                    <Button size="m" className="primary border-0" block>
-                      Video
-                    </Button>
-                  </a>
-                )
-              }
+              changed={description}
+              currentValue={description && description.after}
+              previousValue={description && description.before}
               {...openChangesProps}
             />
             <VersionChangeRow
               attributeName="Screenshots"
-              changed={screenshots || screenshotsPrevious}
+              changed={screenshot}
               currentValue={
                 <div className="screenshots-preview">
-                  {screenshots &&
-                    screenshots.map(screenshot => (
-                      <CardImg key={screenshot} top src={screenshot}></CardImg>
+                  {screenshot &&
+                    screenshot.phone.after.map(screenshot => (
+                      <CardImg key={screenshot.img} top src={screenshot.img}></CardImg>
                     ))}
                 </div>
               }
               previousValue={
                 <div className="screenshots-preview">
-                  {screenshotsPrevious &&
-                    screenshotsPrevious.map(screenshot => (
-                      <CardImg key={screenshot} top src={screenshot}></CardImg>
+                  {screenshot &&
+                    screenshot.phone.before.map(screenshot => (
+                      <CardImg key={screenshot.img} top src={screenshot.img}></CardImg>
+                    ))}
+                </div>
+              }
+              {...openChangesProps}
+            />
+            <VersionChangeRow
+              attributeName="Screenshots"
+              changed={imessage_screenshot}
+              currentValue={
+                <div className="screenshots-preview">
+                  {imessage_screenshot &&
+                    imessage_screenshot.phone.after.map(screenshot => (
+                      <CardImg key={screenshot.img} top src={screenshot.img}></CardImg>
+                    ))}
+                </div>
+              }
+              previousValue={
+                <div className="screenshots-preview">
+                  {imessage_screenshot &&
+                    imessage_screenshot.phone.before.map(screenshot => (
+                      <CardImg key={screenshot.img} top src={screenshot.img}></CardImg>
                     ))}
                 </div>
               }
@@ -156,7 +146,7 @@ class VersionWidget extends React.Component {
           </tbody>
         </Table>
       </div>
-    );
+    ) : null;
   }
 }
 

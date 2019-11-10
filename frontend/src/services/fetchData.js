@@ -1,5 +1,4 @@
 import AWS from 'aws-sdk';
-import * as CSV from 'csv-string';
 import { authenticationService } from './authService';
 
 function fetchData(filename, callback) {
@@ -13,7 +12,6 @@ function fetchData(filename, callback) {
     secretAccessKey,
   });
   var s3 = new AWS.S3();
-  // TODO: dogadac co z max-age
   s3.getObject(
     {
       Bucket: bucketName,
@@ -24,8 +22,7 @@ function fetchData(filename, callback) {
       if (error != null) {
         console.log('Failed to retrieve an object: ' + error);
       } else {
-        const arr = CSV.parse(data.Body.toString('utf-8'));
-        callback(arr);
+        callback(data.Body.toString('utf-8'));
       }
     },
   );
