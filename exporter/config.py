@@ -14,9 +14,7 @@ APP_STORE_NODE_APP_DIR = os.path.join(BASE_DIR, "exporter/app_store_node")
 TASK_TRIES = 1
 
 # Countries included in export
-# TODO: update when final list known
-# TODO: dodac skrypt do updatowania (ustawiania na null w csv) listy krajow
-COUNTRIES = ["us", "de"]
+COUNTRIES = ["us", "de", "gb", "fr", "it"]
 
 DEFAULT_EXPORT_FROM = moment.date(os.environ["DEFAULT_EXPORT_FROM"]).date
 
