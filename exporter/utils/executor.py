@@ -7,10 +7,15 @@ class Executor:
     android_field_list_params = config.COUNTRIES
     ios_field_list_params = config.COUNTRIES
     export_writer_class = export_writer.ExportWriter
+    aggregate = True
 
     def __init__(self, exporter):
         self.exporter = exporter
         self.writer = self.export_writer_class()
+
+    @property
+    def aggregate_func(self):
+        return sum
 
     @property
     def apps(self):
@@ -25,7 +30,8 @@ class Executor:
         raise NotImplementedError
 
     def execute(self, export_from, export_to):
-        export_from = self.optimize_export_from(export_from)
+        if config.OPTIMIZE_EXPORT_FROM: 
+            export_from = self.get_last_date(export_from)
         params_list = self.get_params_list(export_from, export_to)
         exported_data = self.get_export_data(params_list, self.exporter)
         proccessed_data = self.get_proccessed_data(exported_data)
@@ -63,11 +69,28 @@ class Executor:
         )
 
     def write_export_for_platform(self, writer, data, platform_name, filed_list_params):
-        filename_ios = self.get_filename(platform_name, self.kpi)
+        filename = self.get_filename(platform_name, self.kpi, "days")
         filtered_data = self.filter_data_for_platform(data, platform_name)
-        writer.export_data(
-            filtered_data, filename_ios, self.get_export_field_list(filed_list_params)
-        )
+        field_list = self.get_export_field_list(filed_list_params)
+        writer.export_data(filtered_data, filename, field_list)
+        if self.aggregate:
+            self.write_aggregated_exports(filename, field_list, platform_name, self.kpi)
+
+    def write_aggregated_exports(self, filename, field_list, *filename_params):
+        exported_data = writer.get_exported_data(filename)
+        for filename, date_func in [
+            (
+                self.get_filename(*filename_params, "months"),
+                writer.get_first_day_of_the_month,
+            ),
+            (
+                self.get_filename(*filename_params, "weeks"),
+                writer.get_first_day_of_the_week,
+            ),
+        ]:
+            writer.export_aggregated(
+                filename, date_func, exported_data, self.aggregate_func, int, field_list
+            )
 
     def filter_data_for_platform(self, data, platform_name):
         return {
@@ -76,19 +99,15 @@ class Executor:
             if platform == platform_name
         }
 
-    def get_filename(self, platform_name, kpi):
-        return f"{config.EXPORTED_DATA_DIR}/{self.source_name}_{kpi}_{platform_name}_days.csv"
-
-    def optimize_export_from(self, export_from):
-        if config.OPTIMIZE_EXPORT_FROM:
-            return self.get_last_date(export_from)
-        else:
-            return export_from
+    def get_filename(self, platform_name, kpi, aggregate):
+        return f"{config.EXPORTED_DATA_DIR}/{self.source_name}_{kpi}_{platform_name}_{aggregate}.csv"
 
     def get_last_date(self, export_from):
         return max(
             [
-                func.get_last_date(export_from, self.get_filename(platform, self.kpi))
+                func.get_last_date(
+                    export_from, self.get_filename(platform, self.kpi, "days")
+                )
                 for platform in self.apps.values()
             ]
         )

@@ -19,6 +19,7 @@ def export_featured_creatives(exporter, export_from, export_to):
 class FeaturedCreativesExecutor(utils.Executor):
     kpi = "featured_creatives"
     export_writer_class = export_featured_today.FeaturedWriter
+    aggregate = False
 
     def get_proccessed_data(self, exported_data):
         proccessed_data = {}

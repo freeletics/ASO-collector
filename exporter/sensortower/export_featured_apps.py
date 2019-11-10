@@ -17,6 +17,7 @@ def export_featured_apps(exporter, export_from, export_to):
 
 class FeaturedAppsExecutor(export_featured_today.FeaturedTodayExecutor):
     kpi = "featured_apps"
+    aggregate = False
 
     def get_proccessed_data(self, exported_data):
         proccessed_data = {}

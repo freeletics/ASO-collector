@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime
 import moment
+from statistics import mean
 from exporter import config
 from exporter.utils import export_writer
 from exporter.sensortower import utils
@@ -18,14 +19,16 @@ def export_current_keywords(exporter):
 class KeywordsExecutor(utils.Executor):
     kpi = "current_keywords"
 
+    @property
+    def aggregate_func(self):
+        return mean
+
     def write_export(self, data):
         for (date, platform, country), keywords in data.items():
-            filename = self.get_filename(country, platform)
-            self.writer.export_data(
-                {(date, platform): keywords},
-                filename,
-                self.get_export_field_list(keywords),
-            )
+            filename = self.get_filename(platform, country, "days")
+            field_list = self.get_export_field_list(keywords)
+            self.writer.export_data({(date, platform): keywords}, filename, field_list)
+            self.write_aggregated_exports(filename, field_list, platform_name, country)
 
     def execute(self):
         params_list = self.get_params_list()
@@ -34,8 +37,8 @@ class KeywordsExecutor(utils.Executor):
         self.write_export(processed_data)
         self.writer.upload_files()
 
-    def get_filename(self, platform, country):
-        return f"{config.EXPORTED_DATA_DIR}/{self.source_name}_{self.kpi}_{platform}_{country}_days.csv"
+    def get_filename(self, platform, country, aggregate):
+        return f"{config.EXPORTED_DATA_DIR}/{self.source_name}_{self.kpi}_{platform}_{country}_{aggregate}.csv"
 
     def get_processed_data(self, exported_data):
         proccessed_data = {}
@@ -43,7 +46,9 @@ class KeywordsExecutor(utils.Executor):
             date = datetime.now().strftime(config.DATE_FORMAT)
             platform = data["platform"]
             country = data["country"]
-            proccessed_data[(date, platform, country)] = self.get_keywords(data["keywords"])
+            proccessed_data[(date, platform, country)] = self.get_keywords(
+                data["keywords"]
+            )
         return proccessed_data
 
     def get_keywords(self, keywords):

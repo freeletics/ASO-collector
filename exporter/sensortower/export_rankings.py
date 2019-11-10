@@ -1,5 +1,6 @@
 import logging
 import moment
+from statistics import mean
 from exporter import config
 from exporter.utils import export_writer
 from exporter.sensortower import utils
@@ -18,6 +19,10 @@ class RankingExecutor(utils.Executor):
     kpi = "rankings"
     android_field_list_params = 'android'
     ios_field_list_params = 'ios'
+
+    @property
+    def aggregate_func(self):
+        return mean
 
     def get_proccessed_data(self, exported_data):
         proccessed_data = {}

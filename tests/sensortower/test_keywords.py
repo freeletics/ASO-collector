@@ -14,7 +14,7 @@ class TestCurrentKeywordsExecutor:
         }
         executor = export_current_keywords.KeywordsExecutor(mock.Mock())
         executor.write_export(processed_data)
-        assert len(os.listdir(config.EXPORTED_DATA_DIR)) == 2
+        assert len(os.listdir(config.EXPORTED_DATA_DIR)) == 6
 
     def test_updating_keywords_list_export_file(self, raw_data):
         processed_data = {
@@ -24,7 +24,7 @@ class TestCurrentKeywordsExecutor:
         executor = export_current_keywords.KeywordsExecutor(mock.Mock())
         executor.write_export(processed_data)
         filename = os.path.join(
-            config.EXPORTED_DATA_DIR, "sensortower_current_keywords_de_ios_days.csv"
+            config.EXPORTED_DATA_DIR, "sensortower_current_keywords_ios_de_days.csv"
         )
         with open(filename, mode="r") as file:
             reader = csv.DictReader(file)

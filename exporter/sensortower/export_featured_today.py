@@ -29,12 +29,13 @@ class FeaturedTodayExecutor(utils.Executor):
     kpi = "featured_today"
     export_writer_class = FeaturedWriter
     apps = { config.SENSORTOWER_IOS_ID: config.PLATFORM_IOS }
+    aggregate = False
 
     def write_export(self, data):
         self.write_export_for_platform(self.writer, data, "ios")
 
     def write_export_for_platform(self, writer, data, platform_name):
-        filename_ios = self.get_filename(platform_name, self.kpi)
+        filename_ios = self.get_filename(platform_name, self.kpi, 'days')
         writer.export_data(data, filename_ios, self.get_export_field_list())
 
     def get_proccessed_data(self, exported_data):

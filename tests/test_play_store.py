@@ -75,7 +75,7 @@ class TestPlayStoreExport:
         )
 
     def test_export_filename(self, play_store_exporter):
-        assert play_store_exporter.get_export_filename(
+        assert play_store_exporter.get_filename(
             "downloads", "monthly"
         ) == os.path.join(config.EXPORTED_DATA_DIR, "play_store_downloads_monthly.csv")
 
