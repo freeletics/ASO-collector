@@ -23,6 +23,9 @@ class Bucket:
         raise NotImplementedError
 
 
+class UploadFailed(Exception): ...
+
+
 class BucketAws(Bucket):
     def __init__(self, name):
         self.name = name
@@ -44,8 +47,7 @@ class BucketAws(Bucket):
         try:
             response = self.resource.meta.client.upload_file(file_name, self.name, object_name)
         except exceptions.ClientError as e:
-            return False
-        return True
+            raise UploadFailed
 
     @staticmethod
     def get_file_name(obj):

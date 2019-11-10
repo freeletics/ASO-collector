@@ -1,11 +1,14 @@
 import csv
 import copy
+import logging
 
 from exporter import config
 from exporter import bucket
+from exporter.utils import decorators
 from exporter.utils import context_managers
 from exporter.utils import func
 
+logger = logging.getLogger(__name__)
 
 class ExportWriter:
     def __init__(self):
@@ -61,7 +64,7 @@ class ExportWriter:
             for row in sorted_rows:
                 writer.writerow(row)
 
-    # TODO: retry logic on fail
+    @decorators.retry(bucket.UploadFailed, tries=config.TASK_TRIES, logger=logger)
     def upload_files(self):
         bucket_name = config.AWS_S3_BUCKET_NAME
         aws_bucket = bucket.BucketAws(bucket_name)
