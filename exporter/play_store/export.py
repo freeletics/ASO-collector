@@ -1,6 +1,9 @@
 import os
 import csv
 import copy
+import moment
+import datetime
+from statistics import mean
 from itertools import chain
 from exporter import config
 from exporter.utils import func
@@ -90,7 +93,12 @@ class PlayStoreExport(export_writer.ExportWriter):
         self.read_convertion_rates()
 
     def export_convertion_rates(self):
-        self.export(self.convertion_rates, "conversion_rates")
+        self.export(
+            self.convertion_rates,
+            "conversion_rates",
+            aggregate_func=mean,
+            number_type=float,
+        )
 
     def export_downloads(self):
         self.export(self.downloads, "downloads")
@@ -98,8 +106,10 @@ class PlayStoreExport(export_writer.ExportWriter):
     def export_page_views(self):
         self.export(self.page_views, "page_views")
 
-    def export(self, data, kpi_name):
-        self.export_daily(data, kpi_name)
+    def export(self, data, kpi_name, aggregate_func=sum, number_type=int):
+        exported_data = self.export_daily(data, kpi_name)
+        self.export_monthly(exported_data, kpi_name, aggregate_func, number_type)
+        self.export_weekly(exported_data, kpi_name, aggregate_func, number_type)
 
     def get_date_country(self, data):
         return data["date"], data["country"].lower()
@@ -159,6 +169,61 @@ class PlayStoreExport(export_writer.ExportWriter):
         self.export_data(data, filename, self.get_field_list())
         exported_data = self.get_exported_data(filename)
         return exported_data
+
+    def export_monthly(self, data, kpi_name, aggregate_func, number_type):
+        self.export_aggregated(
+            "months",
+            self.get_first_day_of_the_month,
+            data,
+            kpi_name,
+            aggregate_func,
+            number_type,
+        )
+
+    def export_weekly(self, data, kpi_name, aggregate_func, number_type):
+        self.export_aggregated(
+            "weeks",
+            self.get_first_day_of_the_week,
+            data,
+            kpi_name,
+            aggregate_func,
+            number_type,
+        )
+
+    def export_aggregated(
+        self, name, date_func, data, kpi_name, aggregate_func, number_type
+    ):
+        data_copy = copy.deepcopy(data)
+        filename = self.get_export_filename(kpi_name, name)
+        aggregated_data = {}
+        for _, row in data_copy.items():
+            date = date_func(row)
+            aggregated_row = aggregated_data.setdefault(date, {})
+            self.aggregate_data_in_list(row, aggregated_row, number_type)
+        self.aggregate_data(aggregated_data, aggregate_func)
+        self.export_data(aggregated_data, filename, self.get_field_list())
+
+    def aggregate_data_in_list(self, row, aggregated_row, number_type):
+        for key, value in row.items():
+            if value and number_type(value) != 0:
+                aggregated_row.setdefault(key, []).append(number_type(value))
+
+    def aggregate_data(self, data, aggregate_func):
+        for date, values in data.items():
+            for key, value_list in values.items():
+                data[date][key] = round(aggregate_func(value_list), 2)
+
+    def get_first_day_of_the_week(self, row):
+        date = moment.date(row.pop("date")).date
+        first_day = date - datetime.timedelta(days=date.weekday())
+        return first_day.strftime(config.DATE_FORMAT)
+
+    def get_first_day_of_the_month(self, row):
+        return (
+            moment.date(row.pop("date"))
+            .date.replace(day=1)
+            .strftime(config.DATE_FORMAT)
+        )
 
     def get_exported_data(self, filename):
         with open(filename, mode="r") as file:

@@ -26,7 +26,7 @@ class TestPlayStoreExport:
 
     def test_saving_export_creates_new_files(self, play_store_raw_data):
         EXPECTED_KPI = 2
-        EXPECTED_AGGREGATIONS = 1
+        EXPECTED_AGGREGATIONS = 3
         exporter = export.PlayStoreExport(
             "play_store.csv", "play_store_organic.csv", "export_play_store"
         )
