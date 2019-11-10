@@ -33,6 +33,7 @@ def run(export_from, export_to):
         exporter = export.AppStoreExport()
         exporter.proccessed_data(data)
         exporter.write_exports()
+        exporter.writer.upload_files()
 
 
 def build_arguments(export_from, export_to):
