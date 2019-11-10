@@ -90,7 +90,7 @@ class PlayStoreExport(export_writer.ExportWriter):
         self.read_convertion_rates()
 
     def export_convertion_rates(self):
-        self.export(self.convertion_rates, "converstion_rates")
+        self.export(self.convertion_rates, "conversion_rates")
 
     def export_downloads(self):
         self.export(self.downloads, "downloads")
