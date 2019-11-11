@@ -7,6 +7,7 @@ import RatingComparison from '../components/Boxes/RatingComparison';
 import ConversionRateTable from '../components/Boxes/ConversionRateTable';
 import RankingComparison from '../components/Boxes/RankingComparison'
 import ChangeTimeline from '../components/Boxes/ChangesTimeline'
+import FeaturingList from '../components/Boxes/FeaturingList'
 
 class DashboardPage extends React.Component {
   render() {
@@ -15,6 +16,7 @@ class DashboardPage extends React.Component {
         <OverviewFilters>
           <RankingComparison></RankingComparison>
           <ConversionRateTable></ConversionRateTable>
+          <FeaturingList></FeaturingList>
           <RatingComparison></RatingComparison>
           <Rating></Rating>
           <Reviews></Reviews>
