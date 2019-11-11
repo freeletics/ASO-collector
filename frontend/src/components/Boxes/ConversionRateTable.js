@@ -171,7 +171,7 @@ class ConversionRateTable extends React.Component {
                 </BoxHeader>
                 <ConversionRateChart
                   labels={dateLabels(dataIos())}
-                  datasets={getCountries(this.props, dataIos(), 'browsers')}
+                  datasets={getCountries(this.props, dataIos(), 'searchers')}
                 ></ConversionRateChart>
               </CardBody>
             </Card>
@@ -201,7 +201,7 @@ class ConversionRateTable extends React.Component {
                 </BoxHeader>
                 <ConversionRateChart
                   labels={dateLabels(dataIos())}
-                  datasets={getCountries(this.props, dataIos(), 'browsers')}
+                  datasets={getCountries(this.props, dataIos(), 'page_view_browsers')}
                 ></ConversionRateChart>
                 />
               </CardBody>
@@ -229,5 +229,5 @@ const ConversionRateChart = ({ labels, datasets }) => (
 export default withFilters(
   ConversionRateTable,
   ['app_store_conversion_rates', 'dataIos'],
-  ['play_store_converstion_rates', 'dataAndroid'],
+  ['play_store_conversion_rates', 'dataAndroid'],
 );
