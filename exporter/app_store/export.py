@@ -118,7 +118,12 @@ class AppStoreExport:
             row[f"{country}_all"] = data["impressions_total_unique_all"]
             row[f"{country}_searchers"] = data["impressions_total_unique_searchers"]
             row[f"{country}_browsers"] = data["impressions_total_unique_browsers"]
-            row[f"{country}_search_ads"] = data["impressions_search_ads"]
+            row[f"{country}_search_ads"] = (
+                data["impressions_search_ads"]
+                * 1.0
+                * data["impressions_total_unique_searchers"]
+                / data["impressions_total_searchers"]
+            )
             row[
                 f"{country}_organic_searchers"
             ] = self.get_organic_searchers_impressions(data)
@@ -150,7 +155,12 @@ class AppStoreExport:
             row[f"{country}_all"] = data["page_view_unique_all"]
             row[f"{country}_searchers"] = data["page_view_unique_searchers"]
             row[f"{country}_browsers"] = data["page_view_unique_browsers"]
-            row[f"{country}_search_ads"] = data["taps_search_ads"]
+            row[f"{country}_search_ads"] = (
+                data["taps_search_ads"]
+                * 1.0
+                * data["page_view_unique_searchers"]
+                / data["page_view_searchers"]
+            )
             row[f"{country}_organic_searchers"] = self.get_organic_searchers_page_views(
                 data
             )
