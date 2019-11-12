@@ -9,6 +9,7 @@ const PASSWORD = argv.password;
 const APP_ID = argv.id;
 const SEARCH_ADS_CREDENTIALS = argv.certificates;
 const OUTPUT = argv.output;
+const SEARCH_ADS_ONLY = argv.search_ads_only
 const from = argv.from;
 const to = argv.to;
 
@@ -56,7 +57,9 @@ function readRawData() {
   }
 }
 async function getAppStoreData(data, from, to, aggregation, connection) {
-  await getAnalyticsData(data, from, to, aggregation, APP_ID, connection);
+  if (!SEARCH_ADS_ONLY) {
+    await getAnalyticsData(data, from, to, aggregation, APP_ID, connection);
+  }
   await getSearchAdsData(data, from, to, aggregation, SEARCH_ADS_CREDENTIALS);
   fs.writeFileSync(OUTPUT, JSON.stringify(data, null, 2), "utf-8");
 }

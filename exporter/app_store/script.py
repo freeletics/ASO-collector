@@ -4,6 +4,7 @@ import logging
 from datetime import datetime
 
 from exporter import config
+from exporter.utils import func
 from exporter.utils import decorators
 from exporter.app_store import export
 from Naked.toolshed.shell import execute_js
@@ -11,8 +12,12 @@ from Naked.toolshed.shell import execute_js
 logger = logging.getLogger(__name__)
 
 
-APP_STORE_RAW_DATA_FILE = os.path.join(config.RAW_DATA_DIR,
-                                       config.APP_STORE_RAW_DATA_FILENAME)
+CHECK_LAST_DATE_FILE = os.path.join(
+    config.EXPORTED_DATA_DIR, "app_store_conversion_rates_days.csv"
+)
+APP_STORE_RAW_DATA_FILE = os.path.join(
+    config.RAW_DATA_DIR, config.APP_STORE_RAW_DATA_FILENAME
+)
 
 
 class AppStoreScriptFailed(Exception):
@@ -47,6 +52,7 @@ def build_arguments(export_from, export_to):
         "raw_output": APP_STORE_RAW_DATA_FILE,
         "certificates": config.SEARCH_ADS_CERTIFICATES,
         "app_id": config.APP_STORE_APP_ID,
+        "search_ads_only": 1 if config.SEARCH_ADS_ONLY else 0,
     }
     return """--username '{username}' \
               --password '{password}' \
@@ -54,8 +60,11 @@ def build_arguments(export_from, export_to):
               --from '{export_from}' \
               --to '{export_to}' \
               --output '{raw_output}' \
-              --certificates '{certificates}'
-           """.format(**options)
+              --certificates '{certificates}' \
+              --search_ads_only '{search_ads_only}'
+           """.format(
+        **options
+    )
 
 
 if __name__ == "__main__":

@@ -45,6 +45,7 @@ function getData(connection, query, country, date, aggregation) {
           }
         } else {
           reject("No result");
+          console.error(data)
         }
       });
     }, REQUEST_DELAY);
