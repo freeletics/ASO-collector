@@ -20,43 +20,27 @@ def run(export_from=None, export_to=None):
     export_from = string_to_date(export_from) or config.DEFAULT_EXPORT_FROM
     export_to = string_to_date(export_to) or datetime.now() - timedelta(days=1)
     logger.info(f"Exporting data from {export_from} to {export_to}")
-    get_apps_flyier_export(export_from, export_to)
+    #get_apps_flyier_export(export_from, export_to)
     get_sensortower_export(export_from, export_to)
     get_play_store_export(export_from, export_to)
     get_app_store_export(export_from, export_to)
 
 
 def get_play_store_export(export_from, export_to):
-    try:
-        logger.info("Play Store task")
-        play_store_script.run(export_from, export_to)
-    except Exception:
-        logger.error("Play Store task failed ")
-
+    logger.info("Play Store task")
+    play_store_script.run(export_from, export_to)
 
 def get_app_store_export(export_from, export_to):
-    try:
-        logger.info("App Store task")
-        app_store_script.run(export_from, export_to)
-    except Exception:
-        logger.error("App Store task failed ")
-
+    logger.info("App Store task")
+    app_store_script.run(export_from, export_to)
 
 def get_apps_flyier_export(export_from, export_to):
-    try:
-        logger.info("Apps Flyier task")
-        apps_flyier_script.run(export_from, export_to)
-    except Exception:
-        logger.error("Apps Flyier task failed ")
-
+    logger.info("Apps Flyier task")
+    apps_flyier_script.run(export_from, export_to)
 
 def get_sensortower_export(export_from, export_to):
-    try:
-        logger.info("Sensor Tower task")
-        sensortower_script.run(export_from, export_to)
-    except Exception:
-        logger.error("Sensor Tower task failed ")
-
+    logger.info("Sensor Tower task")
+    sensortower_script.run(export_from, export_to)
 
 if __name__ == "__main__":
     print("Running script")
