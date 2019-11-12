@@ -62,33 +62,33 @@ class Executor:
 
     def write_export(self, data):
         self.write_export_for_platform(
-            self.writer, data, "ios", self.ios_field_list_params
+            data, "ios", self.ios_field_list_params
         )
         self.write_export_for_platform(
-            self.writer, data, "android", self.android_field_list_params
+            data, "android", self.android_field_list_params
         )
 
-    def write_export_for_platform(self, writer, data, platform_name, filed_list_params):
+    def write_export_for_platform(self, data, platform_name, filed_list_params):
         filename = self.get_filename(platform_name, self.kpi, "days")
         filtered_data = self.filter_data_for_platform(data, platform_name)
         field_list = self.get_export_field_list(filed_list_params)
-        writer.export_data(filtered_data, filename, field_list)
+        self.writer.export_data(filtered_data, filename, field_list)
         if self.aggregate:
             self.write_aggregated_exports(filename, field_list, platform_name, self.kpi)
 
     def write_aggregated_exports(self, filename, field_list, *filename_params):
-        exported_data = writer.get_exported_data(filename)
+        exported_data = self.writer.get_exported_data(filename)
         for filename, date_func in [
             (
                 self.get_filename(*filename_params, "months"),
-                writer.get_first_day_of_the_month,
+                self.writer.get_first_day_of_the_month,
             ),
             (
                 self.get_filename(*filename_params, "weeks"),
-                writer.get_first_day_of_the_week,
+                self.writer.get_first_day_of_the_week,
             ),
         ]:
-            writer.export_aggregated(
+            self.writer.export_aggregated(
                 filename, date_func, exported_data, self.aggregate_func, int, field_list
             )
 

@@ -28,7 +28,7 @@ class KeywordsExecutor(utils.Executor):
             filename = self.get_filename(platform, country, "days")
             field_list = self.get_export_field_list(keywords)
             self.writer.export_data({(date, platform): keywords}, filename, field_list)
-            self.write_aggregated_exports(filename, field_list, platform_name, country)
+            self.write_aggregated_exports(filename, field_list, platform, country)
 
     def execute(self):
         params_list = self.get_params_list()
