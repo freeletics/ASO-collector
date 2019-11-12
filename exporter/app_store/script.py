@@ -22,6 +22,8 @@ class AppStoreScriptFailed(Exception):
 # TODO: dodac logowanie ze skryptu
 @decorators.retry(AppStoreScriptFailed, tries=config.TASK_TRIES, logger=logger)
 def run(export_from, export_to):
+    if config.OPTIMIZE_EXPORT_FROM:
+        export_from = func.get_last_date(export_from, CHECK_LAST_DATE_FILE)
     success = execute_js(
         os.path.join(config.APP_STORE_NODE_APP_DIR, "index.js"),
         arguments=build_arguments(export_from, export_to),
