@@ -1,6 +1,9 @@
 import os
 import csv
 import moment
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def touch(filename):
@@ -22,3 +25,12 @@ def convertion_rate(downloads, denominator):
         return round(int(downloads) / int(denominator) * 100, 2)
     except ZeroDivisionError:
         return None
+
+
+def download_file_from_storage(bucket, file_name, download_to=None):
+    logger.info(f"Getting file {file_name} from storage")
+    bucket.download_file(file_name, download_to)
+
+
+def get_file_names_from_storage(bucket):
+    return [bucket.get_file_name(obj) for obj in bucket.get_all_objects()]

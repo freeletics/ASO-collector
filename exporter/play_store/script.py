@@ -6,15 +6,21 @@ from datetime import timedelta
 
 from exporter import config
 from exporter import bucket
+from exporter.utils import func
 from exporter.utils import decorators
 from exporter.play_store import export
 
 logger = logging.getLogger(__name__)
 
+CHECK_LAST_DATE_FILE = os.path.join(
+    config.EXPORTED_DATA_DIR, "play_store_conversion_rates_days.csv"
+)
 
 # TODO: download current state from AWS S3 bucket
 @decorators.retry(Exception, tries=config.TASK_TRIES, logger=logger)
 def run(export_from, export_to):
+    if config.OPTIMIZE_EXPORT_FROM:
+        export_from = func.get_last_date(export_from, CHECK_LAST_DATE_FILE)
     logger.info("Getting Acquisition reports")
     bucket_name = config.GCP_PLAY_STORE_REPORTS_BUCKET_NAME
     logger.info(f"Connecting to GCP bucket {bucket_name}")
@@ -46,25 +52,16 @@ def run(export_from, export_to):
 
 def download_reports(export_from, bucket):
     saved_files = {}
-    for filepath in get_file_names_from_storage(bucket):
+    for filepath in func.get_file_names_from_storage(bucket):
         if not filepath.endswith("/") and report_download_condition(
             export_from, filepath
         ):
-            download_file_from_storage(bucket, filepath)
+            func.download_file_from_storage(bucket, filepath)
             date = get_play_store_report_date(filepath).strftime("%Y-%m")
             filename = filepath.split("/")[-1]
             data_type = "organic" if "play_country" in filename else "total"
             saved_files.setdefault(date, {})[data_type] = filename
     return saved_files
-
-
-def download_file_from_storage(bucket, file_name):
-    logger.info(f"Getting file {file_name} from storage")
-    bucket.download_file(file_name)
-
-
-def get_file_names_from_storage(bucket):
-    return [bucket.get_file_name(obj) for obj in bucket.get_all_objects()]
 
 
 def report_download_condition(export_from, file_name):
