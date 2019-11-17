@@ -203,7 +203,6 @@ class ConversionRateTable extends React.Component {
                   labels={dateLabels(dataIos())}
                   datasets={getCountries(this.props, dataIos(), 'page_view_browsers')}
                 ></ConversionRateChart>
-                />
               </CardBody>
             </Card>
           </Col>
