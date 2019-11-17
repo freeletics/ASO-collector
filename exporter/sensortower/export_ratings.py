@@ -18,9 +18,7 @@ class RatingExecutor(utils.Executor):
     android_field_list_params = ["global"]
 
     def get_proccessed_data(self, exported_data):
-        data = self.get_row_per_date(exported_data)
-        proccessed_data = self.get_calculated_daily_amounts(data)
-        return proccessed_data
+        return self.get_row_per_date(exported_data)
 
     def get_row_per_date(self, exported_data):
         proccessed_data = {}

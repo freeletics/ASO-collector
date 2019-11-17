@@ -88,6 +88,7 @@ class TestExportRatings:
         proccessed_data = rating_executor.get_row_per_date(rating_two_day_two_countries)
         assert len(proccessed_data[(conftest.TEST_DATE, "ios")]) == 12
 
+    @pytest.mark.skip(reason="Do not calculate differences between days so data make more sense")
     @mock.patch("exporter.config.COUNTRIES", ["pl", "us"])
     @mock.patch("exporter.config.SENSORTOWER_APPS", {"284882215": "ios"})
     def test_get_proccess_data_drop_last_row(
