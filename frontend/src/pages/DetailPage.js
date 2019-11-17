@@ -12,6 +12,7 @@ import InstallsDoughnut from '../components/Boxes/InstallsDoughnut';
 import NewDownloads from '../components/Boxes/NewDownloads';
 import ConversionRateTable from '../components/Boxes/ConversionRateTable';
 import RankingComparison from '../components/Boxes/RankingComparison'
+import SearchAso from '../components/Boxes/SearchAso'
 
 class DashboardPage extends React.Component {
   render() {
@@ -29,6 +30,7 @@ class DashboardPage extends React.Component {
           <Rating></Rating>
           <Reviews></Reviews>
           <Keywords></Keywords>
+          <SearchAso></SearchAso>
         </OverviewFilters>
       </Page>
     );
