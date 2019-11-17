@@ -48,7 +48,7 @@ def run_script(name, script_run):
     print(f"Running script {name}")
     logger.info(f"Running script {name}")
     export_from = string_to_date(sys.argv[1]) if sys.argv == 2 else config.DEFAULT_EXPORT_FROM
-    export_to = string_to_date(export_to) if sys.argv == 3 else datetime.now() - timedelta(days=3)
+    export_to = string_to_date(export_to) if sys.argv == 3 else config.DEFAULT_EXPORT_TO
     logger.info(f"Exporting data from {export_from} to {export_to}")
     script_run(export_from, export_to)
     logger.info(f"End of script {name}")

@@ -19,6 +19,7 @@ GET_EXPORTS_FROM_BUCKET_BEFORE_RUN = os.environ.get("GET_EXPORTS_FROM_BUCKET_BEF
 COUNTRIES = ["us", "de", "gb", "fr", "it"]
 
 DEFAULT_EXPORT_FROM = moment.date(os.environ["DEFAULT_EXPORT_FROM"]).date
+DEFAULT_EXPORT_TO = datetime.now() - timedelta(days=0)
 
 DATE_FORMAT = "%Y-%m-%d"
 LOG_FILE_NAME_DATE_FORMAT = "%Y-%m-%d"
