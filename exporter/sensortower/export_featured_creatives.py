@@ -1,5 +1,6 @@
 import logging
 import moment
+import datetime
 from exporter import config
 from exporter.utils import export_writer
 from exporter.sensortower import utils
@@ -76,7 +77,10 @@ class FeaturedCreativesExecutor(utils.Executor):
 
     def get_params_list(self, export_from, export_to):
         params_list = []
-        for app_id, platform in self.apps.items():
-            params = self.get_params(export_from, export_to, app_id, platform)
-            params_list.append(params)
+        while export_to - export_from > datetime.timedelta(days=0):
+            export_to_shorten = export_from + datetime.timedelta(days=config.FEATURED_MAX_RANGE)
+            for app_id, platform in self.apps.items():
+                params = self.get_params(export_from, export_to_shorten, app_id, platform)
+                params_list.append(params)
+            export_from = export_to_shorten
         return params_list

@@ -1,5 +1,6 @@
 import logging
 import moment
+import datetime
 from exporter import config
 from exporter.utils import export_writer
 from exporter.sensortower import utils
@@ -73,8 +74,11 @@ class FeaturedAppsExecutor(export_featured_today.FeaturedTodayExecutor):
 
     def get_params_list(self, export_from, export_to):
         params_list = []
-        for country in config.COUNTRIES:
-            for category in config.SENSORTOWER_FEATURED_APPS_IOS_CATEGORIES:
-                params = self.get_params(export_from, export_to, country, category)
-                params_list.append(params)
+        while export_to - export_from > datetime.timedelta(days=0):
+            export_to_shorten = export_from + datetime.timedelta(days=config.FEATURED_MAX_RANGE)
+            for country in config.COUNTRIES:
+                for category in config.SENSORTOWER_FEATURED_APPS_IOS_CATEGORIES:
+                    params = self.get_params(export_from, export_to_shorten, country, category)
+                    params_list.append(params)
+            export_from = export_to_shorten
         return params_list

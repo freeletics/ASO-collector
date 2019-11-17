@@ -1,5 +1,6 @@
 import logging
 import moment
+import datetime
 from exporter import config
 from exporter.utils import export_writer
 from exporter.sensortower import utils
@@ -28,15 +29,15 @@ class FeaturedWriter(export_writer.ExportWriter):
 class FeaturedTodayExecutor(utils.Executor):
     kpi = "featured_today"
     export_writer_class = FeaturedWriter
-    apps = { config.SENSORTOWER_IOS_ID: config.PLATFORM_IOS }
+    apps = {config.SENSORTOWER_IOS_ID: config.PLATFORM_IOS}
     aggregate = False
 
     def write_export(self, data):
-        self.write_export_for_platform(self.writer, data, "ios")
+        self.write_export_for_platform(data, "ios")
 
-    def write_export_for_platform(self, writer, data, platform_name):
-        filename_ios = self.get_filename(platform_name, self.kpi, 'days')
-        writer.export_data(data, filename_ios, self.get_export_field_list())
+    def write_export_for_platform(self, data, platform_name):
+        filename_ios = self.get_filename(platform_name, self.kpi, "days")
+        self.writer.export_data(data, filename_ios, self.get_export_field_list())
 
     def get_proccessed_data(self, exported_data):
         proccessed_data = {}
@@ -90,3 +91,16 @@ class FeaturedTodayExecutor(utils.Executor):
                 "auth_token": config.SENSORTOWER_AUTH_TOKEN,
             },
         )
+
+    def get_params_list(self, export_from, export_to):
+        params_list = []
+        while export_to - export_from > datetime.timedelta(days=0):
+            export_to_shorten = export_from + datetime.timedelta(days=config.FEATURED_MAX_RANGE)
+            for country in config.COUNTRIES:
+                for app_id, platform in self.apps.items():
+                    params = self.get_params(
+                        export_from, export_to_shorten, app_id, platform, country
+                    )
+                    params_list.append(params)
+            export_from = export_to_shorten
+        return params_list
