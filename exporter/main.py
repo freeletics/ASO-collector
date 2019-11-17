@@ -1,65 +1,69 @@
+import os
 import logging
 import moment
 from datetime import datetime, timedelta
-import fire
 from exporter import config
+from exporter import bucket
+from exporter.utils import func
+from exporter.utils import decorators
 from exporter.play_store import script as play_store_script
 from exporter.app_store import script as app_store_script
 from exporter.apps_flyer import script as apps_flyier_script
 from exporter.sensortower import script as sensortower_script
-
+from exporter.app_follow import script as app_follow_script
 
 logger = logging.getLogger(__name__)
 
 
-def string_to_date(date):
-    return moment.date(date) if date else None
-
-
-def run(export_from=None, export_to=None):
-    export_from = string_to_date(export_from) or config.DEFAULT_EXPORT_FROM
-    export_to = string_to_date(export_to) or datetime.now() - timedelta(days=1)
-    logger.info(f"Exporting data from {export_from} to {export_to}")
+def run(export_from, export_to):
+    get_reports_from_s3_bucket()
     get_apps_flyier_export(export_from, export_to)
+    get_app_follow_export(export_from, export_to)
     get_sensortower_export(export_from, export_to)
     get_play_store_export(export_from, export_to)
     get_app_store_export(export_from, export_to)
 
 
+def get_reports_from_s3_bucket():
+    if len(os.listdir(config.EXPORTED_DATA_DIR)) == 0:
+        logger.info(f"No data present in exported data directory.")
+        bucket_name = config.AWS_S3_BUCKET_NAME
+        logger.info(f"Getting exported data reports from {bucket_name}")
+        aws_bucket = bucket.BucketAws(bucket_name)
+        for filepath in func.get_file_names_from_storage(aws_bucket):
+            if not filepath.endswith("/"):
+                func.download_file_from_storage(
+                    aws_bucket, filepath, config.EXPORTED_DATA_DIR
+                )
+
+
+@decorators.catch_task_error("Play Store", logger)
 def get_play_store_export(export_from, export_to):
-    try:
-        logger.info("Play Store task")
-        play_store_script.run(export_from, export_to)
-    except Exception:
-        logger.error("Play Store task failed ")
+    play_store_script.run(export_from, export_to)
 
 
+@decorators.catch_task_error("App Store", logger)
 def get_app_store_export(export_from, export_to):
-    try:
-        logger.info("App Store task")
-        app_store_script.run(export_from, export_to)
-    except Exception:
-        logger.error("App Store task failed ")
+    app_store_script.run(export_from, export_to)
 
 
+@decorators.catch_task_error("Apps Flyier", logger)
 def get_apps_flyier_export(export_from, export_to):
-    try:
-        logger.info("Apps Flyier task")
-        apps_flyier_script.run(export_from, export_to)
-    except Exception:
-        logger.error("Apps Flyier task failed ")
+    apps_flyier_script.run(export_from, export_to)
 
 
+@decorators.catch_task_error("Sensor Tower", logger)
 def get_sensortower_export(export_from, export_to):
-    try:
-        logger.info("Sensor Tower task")
-        sensortower_script.run(export_from, export_to)
-    except Exception:
-        logger.error("Sensor Tower task failed ")
+    sensortower_script.run(export_from, export_to)
 
+
+@decorators.catch_task_error("App Follow", logger)
+def get_app_follow_export(export_from, export_to):
+    app_follow_script.run(export_from, export_to)
+
+
+from exporter.utils import func
 
 if __name__ == "__main__":
-    print("Running script")
-    fire.Fire(run)
-    print("End of script")
+    func.run_script("Main", run)
 
