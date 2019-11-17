@@ -11,7 +11,8 @@ RAW_DATA_DIR = os.path.join(BASE_DIR, "raw_data")
 EXPORTED_DATA_DIR = os.path.join(BASE_DIR, "exported_data")
 APP_STORE_NODE_APP_DIR = os.path.join(BASE_DIR, "exporter/app_store_node")
 
-TASK_TRIES = 1
+DEBUG = os.environ.get("DEBUG", False)
+TASK_TRIES = 1 if DEBUG else 3
 
 # Countries included in export
 COUNTRIES = ["us", "de", "gb", "fr", "it"]
@@ -41,7 +42,6 @@ PLATFORM_IOS = "ios"
 PLATFORM_ANDROID = "android"
 
 # App Follow
-
 APP_FOLLOW_AUTH_TOKEN = os.environ["APP_FOLLOW_AUTH_TOKEN"]
 APP_FOLLOW_CID = os.environ["APP_FOLLOW_CID"]
 APP_FOLLOW_IOS_ID = os.environ["APP_FOLLOW_IOS_ID"]
@@ -82,7 +82,7 @@ SENSORTOWER_REQUEST_LIMIT = 200
 SENSORTOWER_ENDPOINT_BASE = "https://api.sensortower.com/v1"
 
 FEATURED_TODAY_APP_NAME = os.environ["FEATURED_TODAY_APP_NAME"]
-FEATURED_MAX_RANGE = 60
+FEATURED_MAX_RANGE = 30
 
 # ALL CATEGORIES SPECIFIED IN exporter/sensortower/categories.py
 SENSORTOWER_FEATURED_APPS_IOS_CATEGORIES = ["6013"]
