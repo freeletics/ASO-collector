@@ -20,8 +20,9 @@ OPTIMIZE_EXPORT_FROM = int(os.environ.get('OPTIMIZE_EXPORT_FROM', 1))
 # Countries included in export
 COUNTRIES = ["us", "de", "gb", "fr", "it"]
 
-DEFAULT_EXPORT_FROM = moment.date(os.environ["DEFAULT_EXPORT_FROM"]).date
 DEFAULT_EXPORT_TO = datetime.now() - timedelta(days=0)
+DEFAULT_EXPORT_FROM = moment.date(os.environ["DEFAULT_EXPORT_FROM"]).date
+DEFAULT_EXPORT_FROM = DEFAULT_EXPORT_FROM if DEFAULT_EXPORT_TO - DEFAULT_EXPORT_FROM > timedelta(days=0) else DEFAULT_EXPORT_TO
 
 DATE_FORMAT = "%Y-%m-%d"
 LOG_FILE_NAME_DATE_FORMAT = "%Y-%m-%d"
