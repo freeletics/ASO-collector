@@ -118,7 +118,7 @@ class TestPlayStoreScript:
         )
 
     @mock.patch(
-        "exporter.play_store.script.get_file_names_from_storage",
+        "exporter.utils.func.get_file_names_from_storage",
         mock.Mock(
             return_value=[
                 "retained_installers_com.glovo_201901_play_country.csv",
@@ -126,7 +126,7 @@ class TestPlayStoreScript:
             ]
         ),
     )
-    @mock.patch("exporter.play_store.script.download_file_from_storage", mock.Mock())
+    @mock.patch("exporter.utils.func.download_file_from_storage", mock.Mock())
     def test_download_reports_return_dict_with_data_pairs(self):
         downloads_files = script.download_reports(
             datetime.datetime(2019, 1, 1), mock.Mock()
