@@ -58,7 +58,7 @@ class NewDownloads extends React.Component {
   render() {
     const { dataIos, dataAndroid, colSizes } = this.props;
     const browsersIos = reduce(this.props, dataIos(), 'browsers');
-    const searchersIos = reduce(this.props, dataIos(), 'organic_searches');
+    const searchersIos = reduce(this.props, dataIos(), 'organic_searchers');
     const otherPaid = reduce(this.props, dataIos(), 'other_paid');
     const searchAds = reduce(this.props, dataIos(), 'search_ads');
     const downloadsIos = {
