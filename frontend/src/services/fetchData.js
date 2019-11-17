@@ -21,6 +21,7 @@ function fetchData(filename, callback) {
     function(error, data) {
       if (error != null) {
         console.log('Failed to retrieve an object: ' + error);
+        callback('')
       } else {
         callback(data.Body.toString('utf-8'));
       }
