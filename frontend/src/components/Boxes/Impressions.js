@@ -6,6 +6,7 @@ import CountryChart from '../Widget/CountryChart';
 import withFilters from '../Filters/withFilters';
 import { defaultOptions, getChartData } from '../../services/chartService';
 import { dateLabels, getSums, getCountries } from './utils';
+import SearchAdsNote from '../Widget/SearchAdsNote';
 
 class Impressions extends React.Component {
   render() {
@@ -25,6 +26,7 @@ class Impressions extends React.Component {
                   }}
                   options={defaultOptions}
                 />
+                <SearchAdsNote></SearchAdsNote>
               </CardBody>
             </Card>
           </Col>
@@ -44,6 +46,7 @@ class Impressions extends React.Component {
                   }}
                   options={defaultOptions}
                 />
+                <SearchAdsNote></SearchAdsNote>
               </CardBody>
             </Card>
           </Col>
@@ -67,6 +70,7 @@ class Impressions extends React.Component {
                   }}
                   options={defaultOptions}
                 />
+                <SearchAdsNote></SearchAdsNote>
               </CardBody>
             </Card>
           </Col>
@@ -89,6 +93,7 @@ class Impressions extends React.Component {
                     'Search Ads': getSums(this.props, dataIos(), 'search_ads'),
                   })}
                 />
+                <SearchAdsNote></SearchAdsNote>
               </CardBody>
             </Card>
           </Col>

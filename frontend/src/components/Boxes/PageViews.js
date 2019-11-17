@@ -6,6 +6,7 @@ import CountryChart from '../Widget/CountryChart';
 import withFilters from '../Filters/withFilters';
 import { defaultOptions, getChartData } from '../../services/chartService';
 import { dateLabels, getSums, getCountries } from './utils';
+import SearchAdsNote from '../Widget/SearchAdsNote';
 
 class PageViews extends React.Component {
   render() {
@@ -25,6 +26,7 @@ class PageViews extends React.Component {
                   }}
                   options={defaultOptions}
                 />
+                <SearchAdsNote></SearchAdsNote>
               </CardBody>
             </Card>
           </Col>
@@ -66,6 +68,7 @@ class PageViews extends React.Component {
                     'Search Ads': getSums(this.props, dataIos(), 'search_ads'),
                   })}
                 />
+                <SearchAdsNote></SearchAdsNote>
               </CardBody>
             </Card>
           </Col>
@@ -112,6 +115,7 @@ class PageViews extends React.Component {
                   }}
                   options={defaultOptions}
                 />
+                <SearchAdsNote></SearchAdsNote>
               </CardBody>
             </Card>
           </Col>
@@ -135,6 +139,7 @@ class PageViews extends React.Component {
                   }}
                   options={defaultOptions}
                 />
+                <SearchAdsNote></SearchAdsNote>
               </CardBody>
             </Card>
           </Col>
