@@ -27,8 +27,12 @@ def run(export_from, export_to):
     export_rankings.export_rankings(exporter, export_from, export_to)
     logger.info("Getting versions reports")
     export_versions.export_versions(exporter, export_from)
-    logger.info("Getting keywords reports")
-    export_current_keywords.export_current_keywords(exporter)
+    logger.info("Getting featured apps reports")
+    export_featured_apps.export_featured_apps(exporter, export_from, export_to)
+    logger.info("Getting featured creatives reports")
+    export_featured_creatives.export_featured_creatives(exporter, export_from, export_to)
+    logger.info("Getting featured today reports")
+    export_featured_today.export_featured_today(exporter, export_from, export_to)
     logger.info(f"Sensortower API calls count: {exporter.request_counter}")
 
 
