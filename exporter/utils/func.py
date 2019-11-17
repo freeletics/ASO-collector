@@ -1,7 +1,11 @@
 import os
+import sys
 import csv
 import moment
 import logging
+from datetime import datetime
+from datetime import timedelta
+from exporter import config
 
 logger = logging.getLogger(__name__)
 
@@ -34,3 +38,18 @@ def download_file_from_storage(bucket, file_name, download_to=None):
 
 def get_file_names_from_storage(bucket):
     return [bucket.get_file_name(obj) for obj in bucket.get_all_objects()]
+
+
+def string_to_date(date):
+    return moment.date(date) if date else None
+
+
+def run_script(name, script_run):
+    print(f"Running script {name}")
+    logger.info(f"Running script {name}")
+    export_from = string_to_date(sys.argv[1]) if sys.argv == 2 else config.DEFAULT_EXPORT_FROM
+    export_to = string_to_date(export_to) if sys.argv == 3 else datetime.now() - timedelta(days=3)
+    logger.info(f"Exporting data from {export_from} to {export_to}")
+    script_run(export_from, export_to)
+    logger.info(f"End of script {name}")
+    print(f"End of script {name}")
