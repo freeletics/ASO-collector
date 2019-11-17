@@ -73,7 +73,6 @@ APP_STORE_RAW_DATA_FILENAME = "app_store_data.json"
 SEARCH_ADS_ONLY = os.environ.get("SEARCH_ADS_ONLY", False)
 
 # Sensor Tower
-# TODO: ustalic max request (chyba 6 na sekunde)
 SENSORTOWER_REQUEST_DELAY = 0.2
 
 SENSORTOWER_AUTH_TOKEN = os.environ["SENSORTOWER_AUTH_TOKEN"]
