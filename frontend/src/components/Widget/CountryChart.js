@@ -13,7 +13,7 @@ const CountryChart = ({ component, data, options, datasetOption }) => {
         ...options,
         legend: {
           display:
-            Object.entries(data.datasets).length <= MAX_NUMBER_ENTITY_LABELS,
+            options.display || Object.entries(data.datasets).length <= MAX_NUMBER_ENTITY_LABELS,
         },
       }}
     />

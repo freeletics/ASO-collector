@@ -5,20 +5,14 @@ import BoxHeader from '../Widget/BoxHeader';
 import CountryChart from '../Widget/CountryChart';
 import withFilters from '../Filters/withFilters';
 import { defaultOptions } from '../../services/chartService';
-import { dateLabels, getKeywords, capitalize } from './utils';
+import { dateLabels, getKeywords } from './utils';
 
-const getData = (props, platform, countries) => {
-  return countries.length
-    ? props.data(`data${capitalize(platform)}${capitalize(countries[0].value)}`)
-    : [];
-};
 
 class Keywords extends React.Component {
   render() {
-    const countriesSelected = this.props.params.selectedCountries;
     const countriesSelectedCount = this.props.params.selectedCountries.length;
-    const dataIos = getData(this.props, 'ios', countriesSelected);
-    const dataAndroid = getData(this.props, 'android', countriesSelected);
+    const dataIos = this.props.dataIos();
+    const dataAndroid = this.props.dataAndroid();
     return (
       <Row>
         <Col xl={6} lg={6} md={12}>
@@ -75,6 +69,7 @@ const KeywordsRankingHistory = ({ platform, data, countriesSelectedCount }) => {
                     },
                   ],
                 },
+                display: true,
               }}
             />
           )
@@ -88,14 +83,6 @@ const KeywordsRankingHistory = ({ platform, data, countriesSelectedCount }) => {
 
 export default withFilters(
   Keywords,
-  ['sensortower_current_keywords_ios_de', 'dataIosDe'],
-  ['sensortower_current_keywords_android_de', 'dataAndroidDe'],
-  ['sensortower_current_keywords_ios_us', 'dataIosUs'],
-  ['sensortower_current_keywords_android_us', 'dataAndroidUs'],
-  ['sensortower_current_keywords_ios_gb', 'dataIosGb'],
-  ['sensortower_current_keywords_android_gb', 'dataAndroidGb'],
-  ['sensortower_current_keywords_ios_fr', 'dataIosFr'],
-  ['sensortower_current_keywords_android_fr', 'dataAndroidFr'],
-  ['sensortower_current_keywords_ios_it', 'dataIosIt'],
-  ['sensortower_current_keywords_android_it', 'dataAndroidIt'],
+  ['app_follow_keywords_ios', 'dataIos'],
+  ['app_follow_keywords_android', 'dataAndroid'],
 );
