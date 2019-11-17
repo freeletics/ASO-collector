@@ -124,7 +124,7 @@ class AppFollowAsoSearchExecutor(AppFollowKeywordExecutor):
     def get_params(self, app_id, platform, country):
         params = {
             "cid": config.APP_FOLLOW_CID,
-            "term": "freeletics",
+            "term": config.ASO_SEARCH_TERM,
             "country": country,
             "device": self.get_device_for_platform(platform),
         }
