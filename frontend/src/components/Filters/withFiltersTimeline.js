@@ -4,14 +4,14 @@ import { Wrapper } from './withFilters';
 import fetchData from '../../services/fetchData';
 
 const getRange = ({ from, to }, data) =>
-  data.update_data.filter(
+  data.update_data ? data.update_data.filter(
     item => from <= moment(item[0]).toDate() && to >= moment(item[0]).toDate(),
-  );
+  ) : [];
 
 const withFiltersTimeline = (WrappedComponent, ...dataSources) => {
   return class extends Wrapper {
     processData(data) {
-      return JSON.parse(data)
+      return data ? JSON.parse(data) : {}
     }
 
     getCountry() {
