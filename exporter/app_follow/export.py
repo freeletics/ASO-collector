@@ -1,6 +1,7 @@
 import os
 import csv
 import requests
+import logging
 from hashlib import md5
 from statistics import mean
 from datetime import datetime
@@ -8,6 +9,8 @@ from datetime import timedelta
 
 from exporter import config
 from exporter.utils import executor
+
+logger = logging.getLogger(__name__)
 
 APP_FOLLOW_KEYWORDS = "/keywords"
 APP_FOLLOW_ASO_SEARCH = "/aso/search"
@@ -131,6 +134,7 @@ class AppFollowAsoSearchExecutor(AppFollowKeywordExecutor):
     def get_export_data(self, params_list, exporter):
         export_data = []
         for country, params in params_list:
+            logger.info(f"Getting ASO search for params: {str(params)}")
             data = exporter.request_data(APP_FOLLOW_ASO_SEARCH, params)
             for record in data["result"]:
                 record["country"] = country

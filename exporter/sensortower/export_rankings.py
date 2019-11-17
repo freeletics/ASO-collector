@@ -25,6 +25,7 @@ class RankingExecutor(utils.Executor):
         return mean
 
     def get_proccessed_data(self, exported_data):
+        logger.info(f"Processing ranking data")
         proccessed_data = {}
         for data in exported_data:
             platform = config.SENSORTOWER_APPS[str(data["app_id"])]

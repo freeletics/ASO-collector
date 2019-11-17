@@ -21,6 +21,7 @@ class FeaturedAppsExecutor(export_featured_today.FeaturedTodayExecutor):
     aggregate = False
 
     def get_proccessed_data(self, exported_data):
+        logger.info(f"Processing featured apps data")
         proccessed_data = {}
         for data in exported_data:
             date = moment.date(data["date"]).format(config.MOMENT_DATE_FORMAT)
@@ -56,6 +57,7 @@ class FeaturedAppsExecutor(export_featured_today.FeaturedTodayExecutor):
     def get_export_data(self, params_list, exporter):
         exported_data = []
         for platform, params in params_list:
+            logger.info(f"Getting featured apps data for params: {str(params)}")
             data = exporter.request_data(FEATURED_TODAY_IOS_ENDPOINT, params)
             exported_data.extend(data)
         return exported_data

@@ -53,6 +53,7 @@ class AppUpdateTimelineExecutor(utils.Executor):
         self.writer.upload_files()
 
     def get_processed_data(self, exported_data):
+        logger.info(f"Processing versions timeline data")
         processed_data = []
         for change_data in exported_data:
             for data in change_data["update_data"]:
@@ -82,6 +83,7 @@ class AppUpdateTimelineExecutor(utils.Executor):
     def get_export_data(self, params_list, exporter):
         exported_data = []
         for platform, country, params in params_list:
+            logger.info(f"Getting versions data for params: {str(params)}")
             data = exporter.request_data(
                 APP_UPDATES_TIMELINE_ENDPOINT.format(platform), params
             )

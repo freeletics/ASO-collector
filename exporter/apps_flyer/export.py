@@ -1,9 +1,12 @@
 import os
 import csv
 import requests
+import logging
 
 from exporter import config
 from exporter.utils import executor
+
+logger = logging.getLogger(__name__)
 
 APPS_FLYER_MASTER_REPORT_ENDPOINT = "/export/master_report/v4"
 
@@ -35,6 +38,7 @@ class AppsFlyerExecutor(executor.Executor):
         return export_data
 
     def save_raw_report(self, platform, params):
+        logger.info(f"Getting installs data for params: {str(params)}")
         response_data = self.exporter.request_data(
             APPS_FLYER_MASTER_REPORT_ENDPOINT, params
         )
@@ -61,6 +65,7 @@ class AppsFlyerExecutor(executor.Executor):
             return raw_data
 
     def get_proccessed_data(self, exported_data):
+        logger.info(f"Processing installs data")
         proccessed_data = {}
         for data in exported_data:
             date = data["date"]

@@ -40,13 +40,14 @@ class FeaturedTodayExecutor(utils.Executor):
         self.writer.export_data(data, filename_ios, self.get_export_field_list())
 
     def get_proccessed_data(self, exported_data):
+        logger.info(f"Processing featured today data")
         proccessed_data = {}
         for data in exported_data:
             date = moment.date(data["date"]).format(config.MOMENT_DATE_FORMAT)
             country = data["country"].lower()
             for story in data["stories"]:
                 for index, app in enumerate(story["apps"]):
-                    if config.FEATURED_TODAY_APP_NAME in app["name"]:
+                    if app and config.FEATURED_TODAY_APP_NAME in app.get("name"):
                         artwork = (
                             story["artwork"].get("url")
                             if story.get("artwork")
@@ -77,6 +78,7 @@ class FeaturedTodayExecutor(utils.Executor):
     def get_export_data(self, params_list, exporter):
         exported_data = []
         for platform, params in params_list:
+            logger.info(f"Getting featured today data for params: {str(params)}")
             data = exporter.request_data(FEATURED_TODAY_IOS_ENDPOINT, params)
             exported_data.extend(data)
         return exported_data

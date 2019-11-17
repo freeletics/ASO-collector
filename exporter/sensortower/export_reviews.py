@@ -21,6 +21,7 @@ class ReviewExecutor(utils.Executor):
     key_template = "{}_star_{}"
 
     def get_proccessed_data(self, exported_data):
+        logger.info(f"Processing reviews data")
         proccessed_data = {}
         for data in exported_data:
             date = moment.date(data["date"]).format(config.MOMENT_DATE_FORMAT)

@@ -9,20 +9,21 @@ const PASSWORD = argv.password;
 const APP_ID = argv.id;
 const SEARCH_ADS_CREDENTIALS = argv.certificates;
 const OUTPUT = argv.output;
-const SEARCH_ADS_ONLY = argv.search_ads_only
+const SEARCH_ADS_ONLY = argv.search_ads_only;
 const from = argv.from;
 const to = argv.to;
 
 getEverythingForPeriod(from, to);
 
-// TODO: dodac logowanie
 async function getEverythingForPeriod(from, to) {
   const connection = getConnection(USERNAME, PASSWORD);
+  console.log(`From: ${from}, to: ${to}`);
   const startDate = moment.utc(from, "YYYY-MM-DD");
   const weekStartDate = startDate.clone();
   const monthStartDate = startDate.clone();
   const endDate = moment.utc(to, "YYYY-MM-DD");
   const data = readRawData();
+  console.log("Getting data for month");
   while (monthStartDate <= endDate) {
     const startOfMonth = monthStartDate.clone().startOf("month");
     console.log(startOfMonth);
@@ -30,6 +31,7 @@ async function getEverythingForPeriod(from, to) {
     await getAppStoreData(data, startOfMonth, endOfMonth, "month", connection);
     monthStartDate.add(1, "month");
   }
+  console.log("Getting data for week");
   while (weekStartDate <= endDate) {
     const weekMonday = weekStartDate.clone().day("Monday");
     console.log(weekMonday);
@@ -40,6 +42,7 @@ async function getEverythingForPeriod(from, to) {
     await getAppStoreData(data, weekMonday, weekSunday, "week", connection);
     weekStartDate.add(1, "week");
   }
+  console.log("Getting data for day");
   while (startDate <= endDate) {
     console.log(startDate);
     await getAppStoreData(data, startDate, startDate, "day", connection);

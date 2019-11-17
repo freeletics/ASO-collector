@@ -23,6 +23,7 @@ class FeaturedCreativesExecutor(utils.Executor):
     aggregate = False
 
     def get_proccessed_data(self, exported_data):
+        logger.info(f"Processing featured creatives data")
         proccessed_data = {}
         for data in exported_data:
             date = moment.date(data["positions"][0][0]).format(
@@ -53,6 +54,7 @@ class FeaturedCreativesExecutor(utils.Executor):
     def get_export_data(self, params_list, exporter):
         exported_data = []
         for platform, params in params_list:
+            logger.info(f"Getting featured creatives data for params: {str(params)}")
             data = exporter.request_data(
                 FEATURED_TODAY_CREATIVES.format(platform), params
             )
