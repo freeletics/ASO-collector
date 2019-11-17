@@ -14,7 +14,7 @@ export default {
   ],
   countryOptions: [
     { value: 'us', label: 'USA' },
-    { value: 'uk', label: 'United Kingdom' },
+    { value: 'gb', label: 'Great Britain' },
     { value: 'de', label: 'Germany' },
     { value: 'fr', label: 'France' },
     { value: 'it', label: 'Italy' },
