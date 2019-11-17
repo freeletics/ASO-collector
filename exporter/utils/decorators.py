@@ -1,5 +1,6 @@
 import time
 from functools import wraps
+from exporter import config
 
 
 def retry(exceptions, tries=4, delay=3, backoff=2, logger=None):
@@ -24,3 +25,20 @@ def retry(exceptions, tries=4, delay=3, backoff=2, logger=None):
         return f_retry
 
     return deco_retry
+
+
+def catch_task_error(name, logger):
+    def catch(func):
+        def wrapper(*args, **kwargs):
+            logger.info("{} task".format(name))
+            try:
+                func(*args, **kwargs)
+            except Exception as e:
+                if logger:
+                    logger.error("{} task failed".format(name))
+                    logger.error(e)
+                print(e)
+                if config.DEBUG:
+                    raise e
+        return wrapper
+    return catch
