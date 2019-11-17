@@ -7,9 +7,7 @@ logger = logging.getLogger(__name__)
 
 RATING_ENDPOINT = "/{}/review/get_ratings"
 
-# TODO: sprawdzic poprawnosc danych dla ios (brakujace dni)
-# TODO: aggregacja export
-# TODO: dodac logowanie
+
 def export_ratings(exporter, export_from, export_to):
     executor = RatingExecutor(exporter)
     executor.execute(export_from, export_to)
