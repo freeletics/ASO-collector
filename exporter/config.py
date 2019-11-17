@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+from datetime import timedelta
 import moment
 import logging
 from dotenv import load_dotenv
@@ -13,7 +14,8 @@ APP_STORE_NODE_APP_DIR = os.path.join(BASE_DIR, "exporter/app_store_node")
 
 DEBUG = os.environ.get("DEBUG", False)
 TASK_TRIES = 1 if DEBUG else 3
-GET_EXPORTS_FROM_BUCKET_BEFORE_RUN = os.environ.get("GET_EXPORTS_FROM_BUCKET_BEFORE_RUN", True)
+GET_EXPORTS_FROM_BUCKET_BEFORE_RUN = int(os.environ.get("GET_EXPORTS_FROM_BUCKET_BEFORE_RUN", 1))
+OPTIMIZE_EXPORT_FROM = int(os.environ.get('OPTIMIZE_EXPORT_FROM', 1))
 
 # Countries included in export
 COUNTRIES = ["us", "de", "gb", "fr", "it"]
@@ -24,8 +26,6 @@ DEFAULT_EXPORT_TO = datetime.now() - timedelta(days=0)
 DATE_FORMAT = "%Y-%m-%d"
 LOG_FILE_NAME_DATE_FORMAT = "%Y-%m-%d"
 MOMENT_DATE_FORMAT = "YYYY-M-D"
-
-OPTIMIZE_EXPORT_FROM = True
 
 logging.basicConfig(
     filename=f"logs/{datetime.now().strftime(LOG_FILE_NAME_DATE_FORMAT)}.log",
