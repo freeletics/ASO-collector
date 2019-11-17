@@ -25,7 +25,10 @@ def run(export_from, export_to):
 
 
 def get_reports_from_s3_bucket():
-    if len(os.listdir(config.EXPORTED_DATA_DIR)) == 0:
+    if (
+        config.GET_EXPORTS_FROM_BUCKET_BEFORE_RUN
+        or len(os.listdir(config.EXPORTED_DATA_DIR)) == 0
+    ):
         logger.info(f"No data present in exported data directory.")
         bucket_name = config.AWS_S3_BUCKET_NAME
         logger.info(f"Getting exported data reports from {bucket_name}")

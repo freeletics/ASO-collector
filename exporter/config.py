@@ -13,6 +13,7 @@ APP_STORE_NODE_APP_DIR = os.path.join(BASE_DIR, "exporter/app_store_node")
 
 DEBUG = os.environ.get("DEBUG", False)
 TASK_TRIES = 1 if DEBUG else 3
+GET_EXPORTS_FROM_BUCKET_BEFORE_RUN = os.environ.get("GET_EXPORTS_FROM_BUCKET_BEFORE_RUN", True)
 
 # Countries included in export
 COUNTRIES = ["us", "de", "gb", "fr", "it"]
