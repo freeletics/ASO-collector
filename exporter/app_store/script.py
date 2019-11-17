@@ -68,6 +68,5 @@ def build_arguments(export_from, export_to):
 
 
 if __name__ == "__main__":
-    print("Exporting sensortower data")
-    run(export_from=config.DEFAULT_EXPORT_FROM, export_to=datetime.now())
-    print("Script finished")
+    func.run_script("App Store and Search Ads", run)
+

@@ -16,7 +16,7 @@ CHECK_LAST_DATE_FILE = os.path.join(
     config.EXPORTED_DATA_DIR, "play_store_conversion_rates_days.csv"
 )
 
-# TODO: download current state from AWS S3 bucket
+
 @decorators.retry(Exception, tries=config.TASK_TRIES, logger=logger)
 def run(export_from, export_to):
     if config.OPTIMIZE_EXPORT_FROM:
@@ -30,8 +30,8 @@ def run(export_from, export_to):
     logger.info("Acquisition reports saved")
     logger.info("Updating export data")
     for date, monthly_data in saved_files.items():
-        total_data_filename = monthly_data['total'] # TODO: jak wyjatek to zalogowac
-        organic_data_filename = monthly_data['organic']
+        total_data_filename = monthly_data["total"]
+        organic_data_filename = monthly_data["organic"]
         logger.info(
             f"Reading data from files: {total_data_filename}, {organic_data_filename}"
         )
@@ -83,9 +83,6 @@ def get_play_store_report_date(name):
         raise ValueError
 
 
-# TODO: add ability to specify date range with args
 if __name__ == "__main__":
-    print("Exporting play store data")
-    run(export_from=config.DEFAULT_EXPORT_FROM, export_to=datetime.now())
-    print("Script finished")
+    func.run_script("Play Store", run)
 

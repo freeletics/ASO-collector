@@ -2,6 +2,7 @@ import logging
 from datetime import datetime
 
 from exporter import config
+from exporter.utils import func
 from exporter.utils import decorators
 from exporter.sensortower import export
 from exporter.sensortower import export_ratings
@@ -37,6 +38,5 @@ def run(export_from, export_to):
 
 
 if __name__ == "__main__":
-    print("Exporting sensortower data")
-    run(export_from=config.DEFAULT_EXPORT_FROM, export_to=datetime.now())
-    print("Script finished")
+    func.run_script("Sensor Tower", run)
+
