@@ -5,9 +5,10 @@ import moment
 import logging
 from dotenv import load_dotenv
 
-load_dotenv()
+BASE_DIR = os.path.join(os.path.dirname(__file__), '..')
 
-BASE_DIR = os.getcwd()
+load_dotenv(os.path.join(BASE_DIR, '.env'))
+
 RAW_DATA_DIR = os.path.join(BASE_DIR, "raw_data")
 EXPORTED_DATA_DIR = os.path.join(BASE_DIR, "exported_data")
 APP_STORE_NODE_APP_DIR = os.path.join(BASE_DIR, "exporter/app_store_node")
