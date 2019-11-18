@@ -2,8 +2,10 @@
 
 ## Requirements:
 - Python 3.6 or up installed 
-- Python developer package e.g. ```apt-get install python-dev```
-- NodeJs installed 
+- Python developer package ```sudo apt install python3.6-dev build-essential```
+- virtualenv ```sudo apt install virtualenv```
+- NodeJs installed ```sudo apt install nodejs npm```
+- awscli ```sudo apt install awscli```
 
 
 ## Setup:
@@ -13,6 +15,7 @@
 - Create service account in GCP console and give it required permission to access bucket containing Play Store reports. Download .json file with account credentials and place it on same machine as this project. More info on how to configure it: https://support.google.com/googleplay/android-developer/answer/6135870?hl=en
 - Fill .env with all env variables from .env.example (env variable description below)
 - Create service account for accessing AWS bucket and run ```asw configure```.
+- Download Search Ads certificates and set SEARCH_ADS_CERTIFICATES env.
 
 
 ## Env variables:
