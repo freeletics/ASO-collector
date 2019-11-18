@@ -29,11 +29,13 @@ class AppFollowKeywordExecutor(executor.Executor):
     def get_export_data(self, params_list, exporter):
         export_data = []
         for platform, params in params_list:
+            logger.info(f"Getting keywords for params: {str(params)}")
             data = exporter.request_data(APP_FOLLOW_KEYWORDS, params)
             export_data.extend(data["keywords"]["list"])
         return export_data
 
     def get_proccessed_data(self, exported_data):
+        logger.info(f"Process keywords data")
         proccessed_data = {}
         for data in exported_data:
             platform = self.get_platform_for_device(data["device"])
