@@ -39,7 +39,7 @@ def get_file_names_from_storage(bucket):
 
 
 def string_to_date(date):
-    return moment.date(date) if date else None
+    return moment.date(date).date if date else None
 
 
 def run_script(name, script_run):
