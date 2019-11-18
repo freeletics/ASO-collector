@@ -55,7 +55,7 @@ function readRawData() {
     const contents = fs.readFileSync(OUTPUT);
     return JSON.parse(contents);
   } catch (e) {
-    console.log(e);
+    fs.writeFileSync(OUTPUT, JSON.stringify({}), "utf-8");
     return {};
   }
 }
