@@ -53,7 +53,7 @@ def run(export_from, export_to):
 def download_reports(export_from, bucket):
     saved_files = {}
     for filepath in func.get_file_names_from_storage(bucket):
-        if not filepath.endswith("/") and report_download_condition(
+        if 'acquisition/retained_installers' in filepath and not filepath.endswith("/") and report_download_condition(
             export_from, filepath
         ):
             func.download_file_from_storage(bucket, filepath)
