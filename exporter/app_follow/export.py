@@ -79,7 +79,7 @@ class AppFollowKeywordExecutor(executor.Executor):
 
     def get_params_list(self, export_from, export_to):
         params_list = []
-        while export_to - export_from > timedelta(days=0):
+        while export_to - export_from >= timedelta(days=0):
             for country in config.COUNTRIES:
                 for app_id, platform in self.apps.items():
                     params = self.get_params(export_from, app_id, platform, country)
