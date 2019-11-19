@@ -23,7 +23,7 @@ class ExportWriter:
                 key = self.get_key(row, data)
                 export_data = data.pop(key)
                 writer.writerow(self.get_row(key, export_data))
-            except KeyError:
+            except (StopIteration, KeyError):
                 writer.writerow(row)
 
     def get_key(self, row, data):

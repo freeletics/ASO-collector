@@ -7,7 +7,7 @@ from hashlib import md5
 from statistics import mean
 from datetime import datetime
 from datetime import timedelta
-
+from exporter.utils import func
 from exporter import config
 from exporter.utils import executor
 
@@ -90,6 +90,16 @@ class AppFollowKeywordExecutor(executor.Executor):
             export_from = export_from + timedelta(days=1)
         return params_list
 
+    def get_last_date(self, export_from):
+        return max(
+            [
+                func.get_last_date(
+                    export_from, self.get_filename(platform, "us", "days")
+                )
+                for platform in self.apps.values()
+            ]
+        )
+
     def get_filename(self, platform, country, aggregate):
         return f"{config.EXPORTED_DATA_DIR}/{self.source_name}_{self.kpi}_{platform}_{country}_{aggregate}.csv"
 
@@ -104,6 +114,10 @@ class AppFollowAsoSearchExecutor(AppFollowKeywordExecutor):
     source_name = "app_follow"
     kpi = "aso_search"
     path = APP_FOLLOW_ASO_SEARCH
+    
+    @property
+    def aggregate_func(self):
+        return sum
 
     def execute(self):
         params_list = self.get_params_list()
