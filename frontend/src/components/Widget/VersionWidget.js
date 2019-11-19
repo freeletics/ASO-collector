@@ -106,7 +106,7 @@ class VersionWidget extends React.Component {
               changed={screenshot}
               currentValue={
                 <div className="screenshots-preview">
-                  {screenshot &&
+                  {screenshot && screenshot.phone &&
                     screenshot.phone.after.map(screenshot => (
                       <CardImg key={screenshot.img} top src={screenshot.img}></CardImg>
                     ))}
@@ -114,7 +114,7 @@ class VersionWidget extends React.Component {
               }
               previousValue={
                 <div className="screenshots-preview">
-                  {screenshot &&
+                  {screenshot && screenshot.phone &&
                     screenshot.phone.before.map(screenshot => (
                       <CardImg key={screenshot.img} top src={screenshot.img}></CardImg>
                     ))}
@@ -127,7 +127,7 @@ class VersionWidget extends React.Component {
               changed={imessage_screenshot}
               currentValue={
                 <div className="screenshots-preview">
-                  {imessage_screenshot &&
+                  {imessage_screenshot && imessage_screenshot.phone &&
                     imessage_screenshot.phone.after.map(screenshot => (
                       <CardImg key={screenshot.img} top src={screenshot.img}></CardImg>
                     ))}
@@ -135,7 +135,7 @@ class VersionWidget extends React.Component {
               }
               previousValue={
                 <div className="screenshots-preview">
-                  {imessage_screenshot &&
+                  {imessage_screenshot && imessage_screenshot.phone &&
                     imessage_screenshot.phone.before.map(screenshot => (
                       <CardImg key={screenshot.img} top src={screenshot.img}></CardImg>
                     ))}
