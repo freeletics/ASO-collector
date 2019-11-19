@@ -7,15 +7,15 @@ import withFilters from '../Filters/withFilters';
 import { defaultOptions } from '../../services/chartService';
 import { dateLabels, getKeywords } from './utils';
 
-
 class Keywords extends React.Component {
   render() {
     const countriesSelectedCount = this.props.params.selectedCountries.length;
     const dataIos = this.props.dataIos();
     const dataAndroid = this.props.dataAndroid();
+    const { colSizes } = this.props;
     return (
       <Row>
-        <Col xl={6} lg={6} md={12}>
+        <Col {...colSizes} lg={6} md={12}>
           <Card>
             <CardBody>
               <KeywordsRankingHistory
@@ -29,7 +29,7 @@ class Keywords extends React.Component {
             </CardBody>
           </Card>
         </Col>
-        <Col xl={6} lg={6} md={12}>
+        <Col {...colSizes}  lg={6} md={12}>
           <Card>
             <CardBody>
               <KeywordsRankingHistory
