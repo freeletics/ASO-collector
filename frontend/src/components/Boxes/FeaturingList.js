@@ -77,24 +77,32 @@ const FeaturedTabTable = ({ featuredList }) => {
           </tr>
         </thead>
         <tbody>
-          {featuredList.map((entity, index) => (
-            <tr key={index}>
-              <td>
-                {entity.artwork ? (
-                  <a target="_blank" href={entity.artwork}>
-                    Go to image
-                  </a>
-                ) : (
-                  <CardImg src={entity.app_icon}></CardImg>
-                )}
-              </td>
-              <td>{entity.date}</td>
-              <td>{entity.position}</td>
-              <td>{entity.title}</td>
-              <td>{entity.app_name}</td>
-              <td>{entity.country}</td>
-            </tr>
-          ))}
+          {featuredList.map((entity, index) => {
+            if (entity.artwork) {
+              entity.artwork =
+                entity.artwork[0] === '('
+                  ? entity.artwork.split('"')[1]
+                  : entity.artwork;
+            }
+            return (
+              <tr key={index}>
+                <td>
+                  {entity.artwork ? (
+                    <a target="_blank" href={entity.artwork}>
+                      Go to image
+                    </a>
+                  ) : (
+                    <CardImg src={entity.app_icon}></CardImg>
+                  )}
+                </td>
+                <td>{entity.date}</td>
+                <td>{entity.position}</td>
+                <td>{entity.title}</td>
+                <td>{entity.app_name}</td>
+                <td>{entity.country}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </Table>
     </div>
