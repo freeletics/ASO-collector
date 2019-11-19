@@ -94,6 +94,6 @@ class Ratings extends React.Component {
 
 export default withFilters(
   Ratings,
-  ['sensortower_ratings_ios', 'dataIos'],
-  ['sensortower_ratings_android', 'dataAndroid'],
+  ['app_follow_rating_ios', 'dataIos'],
+  ['app_follow_rating_android', 'dataAndroid'],
 );
