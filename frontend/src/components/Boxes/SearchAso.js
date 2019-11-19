@@ -16,7 +16,7 @@ const getData = data => {
   Object.entries(([key, positions]) => (searchResult[key] = avg(positions)));
   return Object.keys(searchResult).sort(function(a, b) {
     return searchResult[a] - searchResult[b];
-  });
+  }).slice(0,10);
 };
 
 class SearchAso extends React.Component {
@@ -81,7 +81,7 @@ const KeywordTable = ({ ranking }) => {
 const KeywordRankingWidget = ({ platform, data, countriesSelectedCount }) => {
   return (
     <div>
-      <BoxHeader>Top 10 apps for the keyword "Glovo" ({platform})</BoxHeader>
+      <BoxHeader>Top 10 apps for the keyword "Freeletics" ({platform})</BoxHeader>
       {countriesSelectedCount === 1 ? (
         <KeywordTable ranking={data}></KeywordTable>
       ) : (
