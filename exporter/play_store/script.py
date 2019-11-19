@@ -53,15 +53,21 @@ def run(export_from, export_to):
 def download_reports(export_from, bucket):
     saved_files = {}
     for filepath in func.get_file_names_from_storage(bucket):
-        if 'acquisition/retained_installers' in filepath and not filepath.endswith("/") and report_download_condition(
-            export_from, filepath
-        ):
+        if download_condition(export_from, filepath):
             func.download_file_from_storage(bucket, filepath)
             date = get_play_store_report_date(filepath).strftime("%Y-%m")
             filename = filepath.split("/")[-1]
             data_type = "organic" if "play_country" in filename else "total"
             saved_files.setdefault(date, {})[data_type] = filename
     return saved_files
+
+
+def download_condition(export_from, filepath):
+    return (
+        "acquisition/retained_installers" in filepath
+        and not filepath.endswith("/")
+        and report_download_condition(export_from, filepath)
+    )
 
 
 def report_download_condition(export_from, file_name):

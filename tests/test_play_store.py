@@ -127,6 +127,7 @@ class TestPlayStoreScript:
         ),
     )
     @mock.patch("exporter.utils.func.download_file_from_storage", mock.Mock())
+    @mock.patch("exporter.play_store.script.download_condition", mock.Mock(return_value=True))
     def test_download_reports_return_dict_with_data_pairs(self):
         downloads_files = script.download_reports(
             datetime.datetime(2019, 1, 1), mock.Mock()
