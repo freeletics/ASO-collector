@@ -70,6 +70,7 @@ React application that display data collected by ASO-collector scripts on variou
 - clone repository
 - ```cd ASO-collector/frontend```
 - ```npm install```
+- set PUBLIC_URL in .env.production to domain where app will be served (e.g. S3 bucket URL, do it before building app and deploying)
 - ```npm run build``` or ```npm start``` for development.
 - deploy as any single page application (it is highly recommended to configure HTTPS as not to pass AWS service account credentials without encryption).
 
