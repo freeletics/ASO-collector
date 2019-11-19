@@ -71,7 +71,7 @@ class AppsFlyerExecutor(executor.Executor):
             date = data["date"]
             platform = data["platform"]
             installs = data["installs"]
-            country = data["country"].lower()
+            country = self.get_country(data["country"].lower())
             record = proccessed_data.setdefault((date, platform), {})
             if data["channel"] == "None":
                 record[f"{country}_organic"] = int(installs)
@@ -79,6 +79,9 @@ class AppsFlyerExecutor(executor.Executor):
                 paid = record.setdefault(f"{country}_paid", 0)
                 record[f"{country}_paid"] = paid + int(installs)
         return proccessed_data
+
+    def get_country(self, country):
+        return country if country != 'uk' else 'gb'
 
     def get_export_field_list(self, filed_list_params):
         return [
@@ -100,9 +103,17 @@ class AppsFlyerExecutor(executor.Executor):
                 "to": export_to.strftime(config.DATE_FORMAT),
                 "groupings": self.groupings,
                 "kpis": self.kpis,
-                "geo": ",".join([country.upper() for country in config.COUNTRIES]),
+                "geo": ",".join([country.upper() for country in self.get_countries()]),
             },
         )
+
+    def get_countries(self):
+        countries = []
+        for country in  config.COUNTRIES:
+            if country == 'gb':
+                country = 'uk'
+            countries.append(country)
+        return countries
 
     def get_params_list(self, export_from, export_to):
         params_list = []
