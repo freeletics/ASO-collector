@@ -15,9 +15,9 @@ logger = logging.getLogger(__name__)
 APP_UPDATES_TIMELINE_ENDPOINT = "/{}/app_update/get_app_update_history"
 
 
-def export_versions(exporter, export_from):
+def export_versions(exporter):
     executor = AppUpdateTimelineExecutor(exporter)
-    executor.execute(export_from)
+    executor.execute()
 
 
 class AppUpdateTimelineWriter(export_writer.ExportWriter):
@@ -44,8 +44,8 @@ class AppUpdateTimelineExecutor(utils.Executor):
     def get_filename(self, country, platform):
         return f"{config.EXPORTED_DATA_DIR}/{self.source_name}_{self.kpi}_{platform}_{country}_days.json"
 
-    def execute(self, export_from):
-        params_list = self.get_params_list(export_from)
+    def execute(self):
+        params_list = self.get_params_list(config.DEFAULT_EXPORT_FROM)
         exported_data = self.get_export_data(params_list, self.exporter)
         processed_data = self.get_processed_data(exported_data)
         for data in processed_data:
