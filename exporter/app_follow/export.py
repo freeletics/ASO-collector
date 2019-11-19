@@ -33,7 +33,8 @@ class AppFollowKeywordExecutor(executor.Executor):
         for platform, params in params_list:
             logger.info(f"Getting keywords for params: {str(params)}")
             data = exporter.request_data(APP_FOLLOW_KEYWORDS, params)
-            export_data.extend(data["keywords"]["list"])
+            if data.get("keywords"):
+                export_data.extend(data["keywords"]["list"])
         return export_data
 
     def get_proccessed_data(self, exported_data):
@@ -140,9 +141,10 @@ class AppFollowAsoSearchExecutor(AppFollowKeywordExecutor):
         for country, params in params_list:
             logger.info(f"Getting ASO search for params: {str(params)}")
             data = exporter.request_data(APP_FOLLOW_ASO_SEARCH, params)
-            for record in data["result"]:
-                record["country"] = country
-            export_data.extend(data["result"])
+            if data.get("result"):
+                for record in data["result"]:
+                    record["country"] = country
+                export_data.extend(data["result"])
         return export_data
 
     def get_processed_data(self, exported_data):
