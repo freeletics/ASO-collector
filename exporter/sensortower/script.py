@@ -21,21 +21,21 @@ logger = logging.getLogger(__name__)
 def run(export_from, export_to):
     exporter = export.SensorTowerExport()
     logger.info("Getting ratings reports")
-    """ export_ratings.export_ratings(exporter, export_from, export_to)
+    export_ratings.export_ratings(exporter, export_from, export_to)
     logger.info("Getting reviews reports")
     export_reviews.export_reviews(exporter, export_from, export_to)
     logger.info("Getting rankings reports")
-    export_rankings.export_rankings(exporter, export_from, e xport_to)"""
+    export_rankings.export_rankings(exporter, export_from, e xport_to)
     logger.info("Getting versions reports")
     export_versions.export_versions(exporter)
-    """ logger.info("Getting featured apps reports")
+    logger.info("Getting featured apps reports")
     export_featured_apps.export_featured_apps(exporter, export_from, export_to)
     logger.info("Getting featured creatives reports")
     export_featured_creatives.export_featured_creatives(exporter, export_from, export_to)
     logger.info("Getting featured today reports")
     export_featured_today.export_featured_today(exporter, export_from, export_to)
     logger.info(f"Sensortower API calls count: {exporter.request_counter}")
-    """
+
 
 if __name__ == "__main__":
     func.run_script("Sensor Tower", run)
