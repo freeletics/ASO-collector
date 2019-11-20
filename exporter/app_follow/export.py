@@ -214,7 +214,7 @@ class AppFollowRatingExecutor(AppFollowKeywordExecutor):
         for app_id, params in params_list:
             logger.info(f"Getting rating data for params: {str(params)}")
             data = exporter.request_data(APP_FOLLOW_RATINGS, params)
-            if data.get('ratings'):
+            if data.get('ratings') and data['ratings'].get('list'):
                 rating_data = data["ratings"]["list"]
                 for rating in rating_data:
                     rating['ext_id'] = app_id
