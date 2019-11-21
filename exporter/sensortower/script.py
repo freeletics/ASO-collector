@@ -25,7 +25,7 @@ def run(export_from, export_to):
     logger.info("Getting reviews reports")
     export_reviews.export_reviews(exporter, export_from, export_to)
     logger.info("Getting rankings reports")
-    export_rankings.export_rankings(exporter, export_from, e xport_to)
+    export_rankings.export_rankings(exporter, export_from, export_to)
     logger.info("Getting versions reports")
     export_versions.export_versions(exporter)
     logger.info("Getting featured apps reports")
