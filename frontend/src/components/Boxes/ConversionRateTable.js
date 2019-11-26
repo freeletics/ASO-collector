@@ -130,7 +130,7 @@ class ConversionRateTable extends React.Component {
                     dateLabels(dataIos()),
                     {
                       'Cr1 = Downloads / Impression (Searches)': {
-                        data: getAvgs(this.props, dataIos(), 'organic_searchers'),
+                        data: getAvgs(this.props, dataIos(), 'searchers'),
                       },
                       'Cr2 = Downloads / Page View (Browsers)': {
                         data: getAvgs(this.props, dataIos(), 'page_view_browsers'),
