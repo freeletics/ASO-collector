@@ -114,7 +114,7 @@ class AppFollowAsoSearchExecutor(AppFollowKeywordExecutor):
     source_name = "app_follow"
     kpi = "aso_search"
     path = APP_FOLLOW_ASO_SEARCH
-    
+
     @property
     def aggregate_func(self):
         return sum
@@ -184,7 +184,7 @@ class AppFollowRatingExecutor(AppFollowKeywordExecutor):
     kpi = "rating"
     apps = config.APP_FOLLOW_APPS
     path = APP_FOLLOW_RATINGS
-    android_field_list_params = ['global']
+    android_field_list_params = ["global"]
 
     def get_params_list(self, export_from, export_to):
         params_list = []
@@ -204,7 +204,7 @@ class AppFollowRatingExecutor(AppFollowKeywordExecutor):
             "ext_id": app_id,
             "country": country,
             "date": export_from.strftime(config.DATE_FORMAT),
-            "type": "relative",
+            "type": "relative" if platform == config.PLATFORM_IOS else "total",
         }
         sign = self.make_sign(self.path, params)
         return (app_id, {**params, "sign": sign})
@@ -241,7 +241,7 @@ class AppFollowRatingExecutor(AppFollowKeywordExecutor):
                 }
             )
         return proccessed_data
-    
+
     def get_export_field_list(self, countries):
         return [
             "date",
@@ -254,12 +254,8 @@ class AppFollowRatingExecutor(AppFollowKeywordExecutor):
         ]
 
     def write_export(self, data):
-        self.write_export_for_platform(
-            data, "ios", self.ios_field_list_params
-        )
-        self.write_export_for_platform(
-            data, "android", self.android_field_list_params
-        )
+        self.write_export_for_platform(data, "ios", self.ios_field_list_params)
+        self.write_export_for_platform(data, "android", self.android_field_list_params)
 
     def get_filename(self, platform, country, aggregate):
         return f"{config.EXPORTED_DATA_DIR}/{self.source_name}_{self.kpi}_{platform}_{aggregate}.csv"

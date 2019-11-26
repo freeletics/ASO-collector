@@ -17,6 +17,7 @@ def run(export_from, export_to):
     logger.info("Getting Rating data")
     export.AppFollowRatingExecutor(exporter).execute(export_from, export_to)
 
+
 if __name__ == "__main__":
-    func.run_script('App Follow', run)
+    func.run_script("App Follow", run)
 
