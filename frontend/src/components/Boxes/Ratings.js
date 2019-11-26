@@ -38,6 +38,7 @@ class Ratings extends React.Component {
             <Card>
               <CardBody>
                 <BoxHeader>Rating (Android) global</BoxHeader>
+                <div className="small">Cumulative data due to lack of an access to correct relative one (per day).</div>
                 {this.props.params.selectedCountries.length === 0 ? (
                   <Bar
                     data={getChartData(
