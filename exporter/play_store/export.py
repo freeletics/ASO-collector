@@ -1,7 +1,10 @@
 import os
 import csv
 import copy
+from statistics import mean
+from itertools import chain
 from exporter import config
+from exporter.utils import func
 from exporter.utils import export_writer
 
 
@@ -13,6 +16,7 @@ class PlayStoreExport(export_writer.ExportWriter):
     def __init__(
         self, source_data_filename, source_data_organic_filename, export_filename_base
     ):
+        super().__init__()
         self.export_filename_base = export_filename_base
         self.source_data_filename = source_data_filename
         self.source_data_organic_filename = source_data_organic_filename
@@ -21,11 +25,12 @@ class PlayStoreExport(export_writer.ExportWriter):
         self.raw_data = []
         self.raw_data_organic = []
         self.raw_data_combined = {}
-        self.downloads_organic = {}
+        self.downloads = {}
         self.downloads_paid = {}
-        self.convertion_rates_organic = {}
+        self.page_views = {}
+        self.page_views_paid = {}
+        self.convertion_rates = {}
         self.convertion_rates_paid = {}
-        self.files_saved = []
 
     def read_raw_data(self):
         self.read_raw_data_from_file(
@@ -35,7 +40,7 @@ class PlayStoreExport(export_writer.ExportWriter):
         )
         for date, country, data in self.raw_data_generator(self.raw_data):
             self.raw_data_combined.setdefault(date, {})[country] = {
-                "impressions": int(data["impressions"]),
+                "page_views": int(data["page_views"]),
                 "downloads": int(data["downloads"]),
             }
         self.read_raw_data_from_file(
@@ -44,9 +49,9 @@ class PlayStoreExport(export_writer.ExportWriter):
             config.PLAY_STORE_CSV_HEADER_MAP_ORGANIC,
         )
         for date, country, data in self.raw_data_generator(self.raw_data_organic):
-            self.raw_data_combined.setdefault(date, {})[country].update(
+            self.raw_data_combined.setdefault(date, {}).setdefault(country, {}).update(
                 {
-                    "impressions_organic": int(data["impressions_organic"]),
+                    "page_views_organic": int(data["page_views_organic"]),
                     "downloads_organic": int(data["downloads_organic"]),
                 }
             )
@@ -81,52 +86,77 @@ class PlayStoreExport(export_writer.ExportWriter):
 
     def read_all(self):
         self.read_raw_data()
-        self.read_downloads_organic()
-        self.read_downloads_paid()
-        self.read_convertion_rates_organic()
-        self.read_convertion_rates_paid()
+        self.read_downloads()
+        self.read_page_views()
+        self.read_convertion_rates()
 
     def export_convertion_rates(self):
-        self.export(self.convertion_rates_organic, "converstion_rates_organic", sum)
-        self.export(self.convertion_rates_paid, "converstion_rates_paid", sum)
+        self.export(
+            self.convertion_rates,
+            "conversion_rates",
+            aggregate_func=mean,
+            number_type=float,
+        )
 
     def export_downloads(self):
-        self.export(self.downloads_organic, "downloads_organic", sum)
-        self.export(self.downloads_paid, "downloads_paid", sum)
+        self.export(self.downloads, "downloads")
 
-    def export(self, data, kpi_name, aggregate_function):
-        self.export_daily(data, kpi_name)
+    def export_page_views(self):
+        self.export(self.page_views, "page_views")
+
+    def export(self, data, kpi_name, aggregate_func=sum, number_type=int):
+        exported_data = self.export_daily(data, kpi_name)
+        self.export_aggregated(
+            self.get_filename(kpi_name, "months"),
+            self.get_first_day_of_the_month,
+            exported_data,
+            aggregate_func,
+            number_type,
+            self.get_field_list()
+        )
+        self.export_aggregated(
+            self.get_filename(kpi_name, "weeks"), 
+            self.get_first_day_of_the_week,
+            exported_data,
+            aggregate_func,
+            number_type,
+            self.get_field_list()
+        )
 
     def get_date_country(self, data):
         return data["date"], data["country"].lower()
 
-    def read_downloads_organic(self):
+    def read_downloads(self):
         for date, country, data in self.data_generator():
-            self.downloads_organic.setdefault(date, {})[country] = data.get(
+            self.downloads.setdefault(date, {})[f"{country}_organic"] = data.get(
                 "downloads_organic", 0
             )
-
-    def read_downloads_paid(self):
         for date, country, data in self.data_generator():
-            self.downloads_paid.setdefault(date, {})[country] = data.get(
+            self.downloads.setdefault(date, {})[f"{country}_paid"] = data.get(
                 "downloads", 0
             ) - data.get("downloads_organic", 0)
 
-    def read_convertion_rates_organic(self):
+    def read_page_views(self):
         for date, country, data in self.data_generator():
-            self.convertion_rates_organic.setdefault(date, {})[
-                country
-            ] = self.calculate_convertion_rate(
-                data.get("downloads_organic", 0), data.get("impressions_organic", 0)
+            self.page_views.setdefault(date, {})[f"{country}_organic"] = data.get(
+                "page_views_organic", 0
             )
+            self.page_views.setdefault(date, {})[f"{country}_paid"] = data.get(
+                "page_views", 0
+            ) - data.get("page_views_organic", 0)
 
-    def read_convertion_rates_paid(self):
+    def read_convertion_rates(self):
         for date, country, data in self.data_generator():
-            self.convertion_rates_paid.setdefault(date, {})[
-                country
-            ] = self.calculate_convertion_rate(
+            self.convertion_rates.setdefault(date, {})[
+                f"{country}_organic"
+            ] = func.convertion_rate(
+                data.get("downloads_organic", 0), data.get("page_views_organic", 0)
+            )
+            self.convertion_rates.setdefault(date, {})[
+                f"{country}_paid"
+            ] = func.convertion_rate(
                 data.get("downloads", 0) - data.get("downloads_organic", 0),
-                data.get("impressions", 0) - data.get("impressions_organic", 0),
+                data.get("page_views", 0) - data.get("page_views_organic", 0),
             )
 
     def data_generator(self):
@@ -141,43 +171,18 @@ class PlayStoreExport(export_writer.ExportWriter):
                 country_data = data.pop(date)
                 writer.writerow(self.get_row(date, country_data))
             except KeyError:
-                writer.writerow(
-                    {
-                        "date": row["date"],
-                        **{
-                            country: row[country]
-                            for country in config.COUNTRIES
-                            if row.get(country)
-                        },
-                    }
-                )
+                writer.writerow(row)
 
     def get_row(self, date, data):
-        return {
-            "date": date,
-            **{
-                country: value
-                for country, value in data.items()
-                if country in config.COUNTRIES
-            },
-        }
+        return {"date": date, **data}
 
     def export_daily(self, data, kpi_name):
-        filename = self.get_export_filename(kpi_name, "daily")
+        filename = self.get_filename(kpi_name, "days")
         self.export_data(data, filename, self.get_field_list())
-        self.files_saved.append(filename)
         exported_data = self.get_exported_data(filename)
         return exported_data
 
-    def get_exported_data(self, filename):
-        with open(filename, mode="r") as file:
-            reader = csv.DictReader(file)
-            exported_data = {}
-            for row in reader:
-                exported_data[row["date"]] = row
-            return exported_data
-
-    def get_export_filename(self, kpi_name, aggregation):
+    def get_filename(self, kpi_name, aggregation):
         return os.path.join(
             self.exported_data_dir,
             f"{self.export_filename_base}_{kpi_name}_{aggregation}.csv",
@@ -185,11 +190,13 @@ class PlayStoreExport(export_writer.ExportWriter):
 
     @staticmethod
     def get_field_list():
-        return ["date", *config.COUNTRIES]
+        return [
+            "date",
+            *list(
+                chain.from_iterable(
+                    (f"{country}_organic", f"{country}_paid")
+                    for country in config.COUNTRIES
+                )
+            ),
+        ]
 
-    @staticmethod
-    def calculate_convertion_rate(downloads, impressions):
-        try:
-            return round(int(downloads) / int(impressions) * 100, 2)
-        except ZeroDivisionError:
-            return None

@@ -7,9 +7,7 @@ logger = logging.getLogger(__name__)
 
 RATING_ENDPOINT = "/{}/review/get_ratings"
 
-# TODO: sprawdzic poprawnosc danych dla ios (brakujace dni)
-# TODO: aggregacja export
-# TODO: dodac logowanie
+
 def export_ratings(exporter, export_from, export_to):
     executor = RatingExecutor(exporter)
     executor.execute(export_from, export_to)
@@ -20,9 +18,7 @@ class RatingExecutor(utils.Executor):
     android_field_list_params = ["global"]
 
     def get_proccessed_data(self, exported_data):
-        data = self.get_row_per_date(exported_data)
-        proccessed_data = self.get_calculated_daily_amounts(data)
-        return proccessed_data
+        return self.get_row_per_date(exported_data)
 
     def get_row_per_date(self, exported_data):
         proccessed_data = {}

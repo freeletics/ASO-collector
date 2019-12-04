@@ -33,8 +33,13 @@ async function getSearchAdsData(
           campaignData.country,
           aggregation
         ];
-        searchAdsData[key] = searchAdsData[key] || initSearchAds();
-        searchAdsData[key] = addSearchAds(searchAdsData[key], campaignData);
+        console.log("Saving data for country", campaignData.country, aggregation);
+        try {
+          searchAdsData[key] = searchAdsData[key] || initSearchAds();
+          searchAdsData[key] = addSearchAds(searchAdsData[key], campaignData);
+        } catch (e) {
+          console.error("Data not are collected for ", campaignData.country)
+        }
       });
     } catch (e) {
       console.error("Saving data failed", group.orgName, e);

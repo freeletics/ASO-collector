@@ -1,5 +1,6 @@
 import logging
 import moment
+from statistics import mean
 from exporter import config
 from exporter.utils import export_writer
 from exporter.sensortower import utils
@@ -19,7 +20,12 @@ class RankingExecutor(utils.Executor):
     android_field_list_params = 'android'
     ios_field_list_params = 'ios'
 
+    @property
+    def aggregate_func(self):
+        return mean
+
     def get_proccessed_data(self, exported_data):
+        logger.info(f"Processing ranking data")
         proccessed_data = {}
         for data in exported_data:
             platform = config.SENSORTOWER_APPS[str(data["app_id"])]

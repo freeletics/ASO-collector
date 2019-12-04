@@ -25,8 +25,8 @@ class TestPlayStoreExport:
             exporter.read_raw_data()
 
     def test_saving_export_creates_new_files(self, play_store_raw_data):
-        EXPECTED_KPI = 4
-        EXPECTED_AGGREGATIONS = 1
+        EXPECTED_KPI = 2
+        EXPECTED_AGGREGATIONS = 3
         exporter = export.PlayStoreExport(
             "play_store.csv", "play_store_organic.csv", "export_play_store"
         )
@@ -44,7 +44,7 @@ class TestPlayStoreExport:
             "play_store.csv", "play_store_organic.csv", "export_play_store"
         )
         exporter.read_all()
-        assert exporter.downloads_organic["2019-03-01"]["br"] is not None
+        assert exporter.downloads["2019-03-01"]["br_organic"] is not None
 
     def test_export_downloads(self, play_store_raw_data):
         exporter = export.PlayStoreExport(
@@ -53,12 +53,6 @@ class TestPlayStoreExport:
         exporter.read_all()
         exporter.export_downloads()
         assert os.path.exists(exporter.files_saved[0]) is True
-
-    def test_calculate_convertion_rate_return_procentage(self):
-        downloads = '4'
-        impressions = '10'
-        calculate_convertion_rate = export.PlayStoreExport.calculate_convertion_rate
-        assert calculate_convertion_rate(downloads, impressions) == 40.0
 
     def test_saving_export_updates_old_file(self, play_store_raw_data):
         exporter = export.PlayStoreExport(
@@ -75,16 +69,15 @@ class TestPlayStoreExport:
             [
                 a == b
                 for a, b in zip(
-                    play_store_exporter.get_field_list(), ["date", "ar", "br"]
+                    play_store_exporter.get_field_list(), ["date", "ar_organic", "ar_paid", "br_organic", "br_paid"]
                 )
             ]
         )
 
     def test_export_filename(self, play_store_exporter):
-        assert (
-            play_store_exporter.get_export_filename("downloads", "monthly")
-            == os.path.join(config.EXPORTED_DATA_DIR, "play_store_downloads_monthly.csv")
-        )
+        assert play_store_exporter.get_filename(
+            "downloads", "monthly"
+        ) == os.path.join(config.EXPORTED_DATA_DIR, "play_store_downloads_monthly.csv")
 
 
 class TestPlayStoreScript:
@@ -124,3 +117,26 @@ class TestPlayStoreScript:
             is False
         )
 
+    @mock.patch(
+        "exporter.utils.func.get_file_names_from_storage",
+        mock.Mock(
+            return_value=[
+                "retained_installers_com.glovo_201901_play_country.csv",
+                "retained_installers_com.glovo_201901_country.csv",
+            ]
+        ),
+    )
+    @mock.patch("exporter.utils.func.download_file_from_storage", mock.Mock())
+    @mock.patch("exporter.play_store.script.download_condition", mock.Mock(return_value=True))
+    def test_download_reports_return_dict_with_data_pairs(self):
+        downloads_files = script.download_reports(
+            datetime.datetime(2019, 1, 1), mock.Mock()
+        )
+        assert (
+            downloads_files["2019-01"]["total"]
+            == "retained_installers_com.glovo_201901_country.csv"
+        )
+        assert (
+            downloads_files["2019-01"]["organic"]
+            == "retained_installers_com.glovo_201901_play_country.csv"
+        )
