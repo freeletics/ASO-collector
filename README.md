@@ -31,6 +31,8 @@
 
 ## Usage:
 
+Enable virtualenv by running ```. env/bin/activate```
+
 Run ```python exporter/main.py``` inside virtualenv to retrieve data from between DEFAULT_EXPORT_FROM and todays date minus three days. Date from which export takes place is optimized based on exported_data content. Script check what is last date inside corresponding .csv file. To disable this option set OPTIMIZE_EXPORT_FROM=0.
 
 To run for specific period ```OPTIMIZE_EXPORT_FROM=0 python exporter/main.py 2019-10-10 2019-10-30``` where first date is from when export should take place and second argument is end date.
