@@ -2,6 +2,7 @@
 
 ## Requirements:
 - Python 3.6 or up installed 
+- Update apt-get ```sudo apt-get update```
 - Python developer package ```sudo apt install python3.6-dev build-essential```
 - virtualenv ```sudo apt install virtualenv```
 - NodeJs installed ```sudo apt install nodejs npm```
