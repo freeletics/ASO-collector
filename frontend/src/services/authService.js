@@ -17,6 +17,7 @@ function login(accessKeyId, secretAccessKey, bucketName) {
 }
 
 function logout() {
+  localStorage.removeItem('bucketName');
   localStorage.removeItem('accessKeyId');
   localStorage.removeItem('secretAccessKey');
   window.location = '/login';
