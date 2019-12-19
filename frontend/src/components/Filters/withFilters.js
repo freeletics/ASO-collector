@@ -82,14 +82,27 @@ const withFilters = (WrappedComponent, ...dataSources) => {
       const aggregation = this.props.params.selectedAggregation.value;
       const countriesSelected = this.props.params.selectedCountries;
       dataSources.forEach(([filenameBase, dataName]) => {
-        fetchData(
-          this.getFilename(filenameBase, aggregation, countriesSelected),
-          data =>
-            this.setState({
-              ['loaded' + dataName]: true,
-              [dataName]: this.processData(data),
-            }),
-        );
+        if (
+          (!filenameBase.includes('aso_search') &&
+          !filenameBase.includes('keywords')) ||
+          (countriesSelected.length === 1 &&
+            (filenameBase.includes('aso_search') ||
+              filenameBase.includes('keywords')))
+        ) {
+          fetchData(
+            this.getFilename(filenameBase, aggregation, countriesSelected),
+            data =>
+              this.setState({
+                ['loaded' + dataName]: true,
+                [dataName]: this.processData(data),
+              }),
+          );
+        } else {
+          this.setState({
+            ['loaded' + dataName]: true,
+            [dataName]: [],
+          })
+        }
       });
     }
 
