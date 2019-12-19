@@ -6,10 +6,12 @@ function fetchData(filename, callback) {
     accessKeyId,
     secretAccessKey,
     bucketName,
+    region,
   } = authenticationService.currentBucketData;
   AWS.config.update({
     accessKeyId,
     secretAccessKey,
+    region,
   });
   var s3 = new AWS.S3();
   s3.getObject(
