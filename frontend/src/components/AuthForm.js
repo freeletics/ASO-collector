@@ -9,6 +9,7 @@ class AuthForm extends React.Component {
     history: createBrowserHistory(),
     accessKeyId: '',
     secretAccessKey: '',
+    region: '',
     bucketName: '',
     error: false,
   };
@@ -33,6 +34,7 @@ class AuthForm extends React.Component {
       this.state.accessKeyId,
       this.state.secretAccessKey,
       this.state.bucketName,
+      this.state.region
     );
     const { state } = this.state.history.location;
     if (state) {
@@ -51,6 +53,13 @@ class AuthForm extends React.Component {
             {...this.props.bucketName}
             value={this.state.bucketName}
             onChange={e => this.setState({ bucketName: e.target.value })}
+          />
+        </FormGroup>
+        <FormGroup>
+          <Input
+            {...this.props.region}
+            value={this.state.region}
+            onChange={e => this.setState({ region: e.target.value })}
           />
         </FormGroup>
         <FormGroup>
@@ -109,6 +118,10 @@ AuthForm.defaultProps = {
   bucketName: {
     type: 'text',
     placeholder: 'Bucket Name',
+  },
+  region: {
+    type: 'text',
+    placeholder: 'Region',
   },
 };
 
