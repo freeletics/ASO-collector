@@ -5,7 +5,15 @@ import fetchData from '../../services/fetchData';
 
 export const getRange = ({ from, to }, data) =>
   data.filter(
-    row => from <= moment(row.date).toDate() && to >= moment(row.date).toDate(),
+    row =>
+      from <=
+        moment(row.date)
+          .utc()
+          .toDate() &&
+      to >=
+        moment(row.date)
+          .utc()
+          .toDate(),
   );
 
 export class Wrapper extends React.Component {

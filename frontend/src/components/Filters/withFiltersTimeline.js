@@ -4,9 +4,15 @@ import { Wrapper } from './withFilters';
 import fetchData from '../../services/fetchData';
 
 const getRange = ({ from, to }, data) =>
-  data.update_data ? data.update_data.filter(
-    item => from <= moment(item[0]).toDate() && to >= moment(item[0]).toDate(),
-  ) : [];
+  data.update_data
+    ? data.update_data.filter(
+        item =>
+          from <= moment(item[0]).toDate() &&
+          moment(to)
+            .add(1, 'days')
+            .toDate() >= moment(item[0]).toDate(),
+      )
+    : [];
 
 const withFiltersTimeline = (WrappedComponent, ...dataSources) => {
   return class extends Wrapper {
