@@ -65,6 +65,7 @@ def download_reports(export_from, bucket):
 def download_condition(export_from, filepath):
     return (
         "acquisition/retained_installers" in filepath
+        and config.PLAY_STORE_APP_ID in filepath
         and not filepath.endswith("/")
         and report_download_condition(export_from, filepath)
     )
