@@ -109,6 +109,7 @@ SENSORTOWER_RANKING_CHART_TYPES = {
 
 # Play store
 GCP_PLAY_STORE_REPORTS_BUCKET_NAME = os.environ["GCP_PLAY_STORE_REPORTS_BUCKET_NAME"]
+PLAY_STORE_APP_ID = os.environ.get("PLAY_STORE_APP_ID", "com.freeletics.lite")
 
 PLAY_STORE_CSV_HEADER_MAP_BASE = {
     "Date": "date",
