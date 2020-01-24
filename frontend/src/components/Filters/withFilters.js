@@ -3,18 +3,13 @@ import * as CSV from 'csv-string';
 import moment from 'moment';
 import fetchData from '../../services/fetchData';
 
-export const getRange = ({ from, to }, data) =>
-  data.filter(
-    row =>
-      from <=
-        moment(row.date)
-          .utc()
-          .toDate() &&
-      to >=
-        moment(row.date)
-          .utc()
-          .toDate(),
+export const getRange = ({ from, to }, data) => {
+  from = moment(from).utc();
+  to = moment(to).utc();
+  return data.filter(
+    row => from <= moment(row.date).utc() && to >= moment(row.date).utc(),
   );
+};
 
 export class Wrapper extends React.Component {
   constructor(props) {
