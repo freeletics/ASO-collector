@@ -4,10 +4,10 @@ import moment from 'moment';
 import fetchData from '../../services/fetchData';
 
 export const getRange = ({ from, to }, data) => {
-  from = moment(from).utc();
-  to = moment(to).utc();
+  from = moment(from).utc().format('YYYY-MM-DD');
+  to = moment(to).utc().format('YYYY-MM-DD');
   return data.filter(
-    row => from <= moment(row.date).utc() && to >= moment(row.date).utc(),
+    row => from <= row.date && to >= row.date
   );
 };
 
@@ -87,7 +87,7 @@ const withFilters = (WrappedComponent, ...dataSources) => {
       dataSources.forEach(([filenameBase, dataName]) => {
         if (
           (!filenameBase.includes('aso_search') &&
-          !filenameBase.includes('keywords')) ||
+            !filenameBase.includes('keywords')) ||
           (countriesSelected.length === 1 &&
             (filenameBase.includes('aso_search') ||
               filenameBase.includes('keywords')))
@@ -104,7 +104,7 @@ const withFilters = (WrappedComponent, ...dataSources) => {
           this.setState({
             ['loaded' + dataName]: true,
             [dataName]: [],
-          })
+          });
         }
       });
     }
